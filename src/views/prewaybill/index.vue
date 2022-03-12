@@ -19,23 +19,23 @@
               rows="8"
               clearable
               resize="none"
-              placeholder="请输入单号查询（模糊查询）"
+              placeholder="请输入单号查询（精准匹配）"
             />
           </el-form-item>
         </el-col>
         <el-col :span="4">
           <el-form-item label="运输方式" prop="carrierRouteId">
-            <el-select v-model="formQuery.carrierRouteId" filterable placeholder="运输方式" />
+            <CarrierRoute v-model="formQuery.carrierRouteId" @setValue="(val) => formQuery.carrierRouteId = val" />
           </el-form-item>
         </el-col>
         <el-col :span="4">
           <el-form-item label="目的地" prop="countryId">
-            <el-select v-model="formQuery.countryId" filterable placeholder="目的地" />
+            <Country v-model="formQuery.countryId" @setValue="(val) => formQuery.countryId = val" />
           </el-form-item>
         </el-col>
         <el-col :span="4">
           <el-form-item label="用户" prop="clientId">
-            <el-select v-model="formQuery.clientId" filterable placeholder="所属用户" />
+            <Client v-model="formQuery.clientId" @setValue="(val) => formQuery.clientId = val" />
           </el-form-item>
         </el-col>
         <el-col :span="4">
@@ -129,6 +129,9 @@
 
 <script>
 import Pagination from '@/components/Pagination'
+import CarrierRoute from '@/components/Select/CarrierRoute'
+import Country from '@/components/Select/Country'
+import Client from '@/components/Select/Client'
 
 const column = [
   {
@@ -207,7 +210,10 @@ const column = [
 export default {
   name: 'Prewaybill',
   components: {
-    Pagination
+    Pagination,
+    CarrierRoute,
+    Country,
+    Client
   },
   data() {
     return {
@@ -256,6 +262,9 @@ export default {
     // 重置表单
     resetForm(formName) {
       this.$refs[formName].resetFields()
+    },
+    onQuery() {
+      console.info(this.formQuery)
     }
   }
 }

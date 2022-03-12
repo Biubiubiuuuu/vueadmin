@@ -1,5 +1,5 @@
 <template>
-  <el-select ref="countrySelect" v-model="selectVal" placeholder="国家列表" filterable clearable>
+  <el-select ref="currencySelect" v-model="selectVal" placeholder="币种类型" filterable clearable>
     <el-option
       v-for="item in options"
       :key="item.id"
@@ -10,10 +10,10 @@
 </template>
 
 <script>
-import { getCountrySelect } from '@/api/select'
+import { getCurrencySelect } from '@/api/select'
 
 export default {
-  name: 'CountrySelect',
+  name: 'CurrencySelect',
   props: {
     value: {
       type: Number,
@@ -36,17 +36,14 @@ export default {
     }
   },
   created() {
-    this.getCountrySelect()
+    this.getCurrencySelect()
   },
   methods: {
-    getCountrySelect() {
-      getCountrySelect().then(resp => {
+    getCurrencySelect() {
+      getCurrencySelect().then(resp => {
         this.options = resp.data
         console.info(resp)
       })
-    },
-    change($event) {
-      this.$emit('change', $event)
     }
   }
 }

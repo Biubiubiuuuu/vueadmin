@@ -1,5 +1,5 @@
 <template>
-  <el-select ref="countrySelect" v-model="selectVal" placeholder="国家列表" filterable clearable>
+  <el-select ref="packTypeSelect" v-model="value" placeholder="包装方式" filterable clearable>
     <el-option
       v-for="item in options"
       :key="item.id"
@@ -10,10 +10,10 @@
 </template>
 
 <script>
-import { getCountrySelect } from '@/api/select'
+import { getPackTypeSelect } from '@/api/select'
 
 export default {
-  name: 'CountrySelect',
+  name: 'PackTypeSelect',
   props: {
     value: {
       type: Number,
@@ -36,17 +36,14 @@ export default {
     }
   },
   created() {
-    this.getCountrySelect()
+    this.getPackTypeSelect()
   },
   methods: {
-    getCountrySelect() {
-      getCountrySelect().then(resp => {
+    getPackTypeSelect() {
+      getPackTypeSelect().then(resp => {
         this.options = resp.data
         console.info(resp)
       })
-    },
-    change($event) {
-      this.$emit('change', $event)
     }
   }
 }

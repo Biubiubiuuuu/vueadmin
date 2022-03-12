@@ -1,19 +1,19 @@
 <template>
-  <el-select ref="countrySelect" v-model="selectVal" placeholder="国家列表" filterable clearable>
+  <el-select ref="clientSelect" v-model="selectVal" placeholder="用户" filterable clearable>
     <el-option
       v-for="item in options"
       :key="item.id"
-      :label="item.cnName +'('+item.code+')'"
+      :label="item.name +'('+item.clientCode+')'"
       :value="item.id"
     />
   </el-select>
 </template>
 
 <script>
-import { getCountrySelect } from '@/api/select'
+import { getClientSelect } from '@/api/select'
 
 export default {
-  name: 'CountrySelect',
+  name: 'ClientSelect',
   props: {
     value: {
       type: Number,
@@ -36,11 +36,11 @@ export default {
     }
   },
   created() {
-    this.getCountrySelect()
+    this.getClientSelect()
   },
   methods: {
-    getCountrySelect() {
-      getCountrySelect().then(resp => {
+    getClientSelect() {
+      getClientSelect().then(resp => {
         this.options = resp.data
         console.info(resp)
       })

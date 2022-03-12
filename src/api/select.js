@@ -2,28 +2,28 @@ import request from '@/utils/request'
 
 export function getCountrySelect() {
   return request({
-    url: '/',
+    url: '/Country/GetSelectAsync',
     method: 'post'
   })
 }
 
 export function getClientSelect() {
   return request({
-    url: '/',
+    url: '/Client/GetCurrentSelectAsync',
     method: 'post'
   })
 }
 
 export function getCarrierRouteSelect() {
   return request({
-    url: '/',
+    url: '/CarrierRoute/GetClientCarrierRouteSelectAsync',
     method: 'post'
   })
 }
 
 export function getCurrencySelect() {
   return request({
-    url: '/',
+    url: '/Server/GetGoodsType',
     method: 'post'
   })
 }
@@ -37,21 +37,21 @@ export function getExtraServiceSelect() {
 
 export function getGoodsTypeSelect() {
   return request({
-    url: '/',
+    url: '/Server/GetGoodsType',
     method: 'post'
   })
 }
 
 export function getPackTypeSelect() {
   return request({
-    url: '/',
+    url: '/Server/GetPackType',
     method: 'post'
   })
 }
 
 export function getUnitTypeSelect() {
   return request({
-    url: '/',
+    url: '/Server/GetUnitCodeType',
     method: 'post'
   })
 }

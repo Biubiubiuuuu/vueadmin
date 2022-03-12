@@ -1,19 +1,19 @@
 <template>
-  <el-select ref="countrySelect" v-model="selectVal" placeholder="国家列表" filterable clearable>
+  <el-select ref="carrierRouteSelect" v-model="selectVal" placeholder="运输方式" filterable clearable>
     <el-option
       v-for="item in options"
       :key="item.id"
-      :label="item.cnName +'('+item.code+')'"
+      :label="item.name +'('+item.code+')'"
       :value="item.id"
     />
   </el-select>
 </template>
 
 <script>
-import { getCountrySelect } from '@/api/select'
+import { getCarrierRouteSelect } from '@/api/select'
 
 export default {
-  name: 'CountrySelect',
+  name: 'CarrierRouteSelect',
   props: {
     value: {
       type: Number,
@@ -36,17 +36,14 @@ export default {
     }
   },
   created() {
-    this.getCountrySelect()
+    this.getCarrierRouteSelect()
   },
   methods: {
-    getCountrySelect() {
-      getCountrySelect().then(resp => {
+    getCarrierRouteSelect() {
+      getCarrierRouteSelect().then(resp => {
         this.options = resp.data
         console.info(resp)
       })
-    },
-    change($event) {
-      this.$emit('change', $event)
     }
   }
 }
