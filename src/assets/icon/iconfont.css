@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3241706 */
-  src: url('iconfont.woff2?t=1647078403289') format('woff2'),
-       url('iconfont.woff?t=1647078403289') format('woff'),
-       url('iconfont.ttf?t=1647078403289') format('truetype');
+  src: url('iconfont.woff2?t=1665718640244') format('woff2'),
+       url('iconfont.woff?t=1665718640244') format('woff'),
+       url('iconfont.ttf?t=1665718640244') format('truetype');
 }
 
 .iconfont {
@@ -13,12 +13,108 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-[class^="icon-third"], [class*=" icon-third"] {
-  font-family: "iconfont" !important;
-  font-size: 16px;
-  font-style: normal;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.el-icon-dy-tuichuquanping:before {
+  content: "\e8fa";
+}
+
+.el-icon-dy-quanping:before {
+  content: "\e655";
+}
+
+.el-icon-dy-zhongyingwenyingwen-01:before {
+  content: "\e671";
+}
+
+.el-icon-dy-baoguo_lanshou_o:before {
+  content: "\ebb8";
+}
+
+.el-icon-dy-yishouhuo1:before {
+  content: "\e640";
+}
+
+.el-icon-dy-quanbugengduo:before {
+  content: "\e71e";
+}
+
+.el-icon-dy-feijichang:before {
+  content: "\e623";
+}
+
+.el-icon-dy-flagqizi:before {
+  content: "\e6d5";
+}
+
+.el-icon-dy-gantanhao:before {
+  content: "\e606";
+}
+
+.el-icon-dy-loudou:before {
+  content: "\e607";
+}
+
+.el-icon-dy-yunshuguojiu:before {
+  content: "\e7bc";
+}
+
+.el-icon-dy-shibaixiaolian:before {
+  content: "\e627";
+}
+
+.el-icon-dy-yishouhuo:before {
+  content: "\e630";
+}
+
+.el-icon-dy-dizhibu:before {
+  content: "\e650";
+}
+
+.el-icon-dy-Invoice:before {
+  content: "\e668";
+}
+
+.el-icon-dy-daochu:before {
+  content: "\e61b";
+}
+
+.el-icon-dy-yonghuguanli:before {
+  content: "\e603";
+}
+
+.el-icon-dy-daoru:before {
+  content: "\e6ae";
+}
+
+.el-icon-dy-chuangjianv:before {
+  content: "\e619";
+}
+
+.el-icon-dy-dayinji:before {
+  content: "\e6c2";
+}
+
+.el-icon-dy-quxiao:before {
+  content: "\e68e";
+}
+
+.el-icon-dy-776bianjiqi_congcaogaoxiangjiazai:before {
+  content: "\e659";
+}
+
+.el-icon-dy-koujianshijian:before {
+  content: "\e613";
+}
+
+.el-icon-dy-anniu-tuijian:before {
+  content: "\e689";
+}
+
+.el-icon-dy-shanchu:before {
+  content: "\e602";
+}
+
+.el-icon-dy-shujuhuoqu:before {
+  content: "\e605";
 }
 
 .el-icon-dy-wodedingdan:before {

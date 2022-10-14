@@ -4,7 +4,8 @@ import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale/lang/zh-CN' // lang i18n
+import i18n from './lang'
+import Clipboard from 'clipboard'
 
 import '@/styles/index.scss' // global css
 import './assets/icon/iconfont.css' // 引入阿里巴巴图标库
@@ -30,16 +31,15 @@ import '@/permission' // permission control
 //   mockXHR()
 // }
 
-// set ElementUI lang to EN
-Vue.use(ElementUI, { locale })
-// 如果想要中文版 element-ui，按如下方式声明
-// Vue.use(ElementUI)
+Vue.use(ElementUI, { i18n: (key, value) => i18n.t(key, value) })
 
 Vue.config.productionTip = false
+Vue.prototype.Clipboard = Clipboard
 
 new Vue({
   el: '#app',
   router,
   store,
+  i18n,
   render: h => h(App)
 })

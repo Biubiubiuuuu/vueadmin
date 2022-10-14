@@ -16,19 +16,22 @@ export function edit(data) {
   })
 }
 
-export function getDetail(params) {
+export function getDetail(data) {
   return request({
     url: '/Client/PreWayBill/GetAsync',
     method: 'post',
-    params
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    }
   })
 }
 
-export function getList(params) {
+export function getList(data) {
   return request({
     url: '/Client/PreWayBill/GetListAsync',
     method: 'post',
-    params
+    data
   })
 }
 
@@ -89,7 +92,39 @@ export function submitSeizureAsync(data) {
 
 export function submitReturnAsync(data) {
   return request({
-    url: '/Client/PreWayBill/submitReturnAsync',
+    url: '/Client/PreWayBill/SubmitReturnAsync',
+    method: 'post',
+    data
+  })
+}
+
+export function batchImportAsync(data) {
+  return request({
+    url: '/Client/PreWayBill/BatchImportAsync',
+    method: 'post',
+    data
+  })
+}
+
+export function convertToPreAsync(data) {
+  return request({
+    url: '/Client/PreWayBill/ConvertToPreAsync',
+    method: 'post',
+    data
+  })
+}
+
+export function printLabelAsync(data) {
+  return request({
+    url: '/Client/PreWayBill/PrintLabelAsync',
+    method: 'post',
+    data
+  })
+}
+
+export function printInvoiceLabelAsync(data) {
+  return request({
+    url: '/Client/PreWayBill/PrintInvoiceLabelAsync',
     method: 'post',
     data
   })

@@ -1,5 +1,5 @@
 <template>
-  <el-select ref="clientSelect" v-model="selectVal" placeholder="用户" filterable clearable>
+  <el-select ref="clientSelect" v-model="selectVal" placeholder="用户" filterable clearable :multiple="multiple">
     <el-option
       v-for="item in options"
       :key="item.id"
@@ -10,14 +10,19 @@
 </template>
 
 <script>
+import { getClientCache, setClientCache } from '@/api/cache'
 import { getClientSelect } from '@/api/select'
 
 export default {
   name: 'ClientSelect',
   props: {
     value: {
-      type: Number,
+      type: Array,
       default: undefined
+    },
+    multiple: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -40,13 +45,15 @@ export default {
   },
   methods: {
     getClientSelect() {
-      getClientSelect().then(resp => {
-        this.options = resp.data
-        console.info(resp)
-      })
-    },
-    change($event) {
-      this.$emit('change', $event)
+      var list = getClientCache()
+      if (list === null || list === undefined) {
+        getClientSelect().then(resp => {
+          this.options = resp.data
+          setClientCache(this.options)
+        })
+      } else {
+        this.options = list
+      }
     }
   }
 }

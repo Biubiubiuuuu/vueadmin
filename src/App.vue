@@ -9,3 +9,9 @@ export default {
   name: 'App'
 }
 </script>
+
+<style>
+.el-table__fixed-right {
+  height: 100% !important;
+}
+</style>

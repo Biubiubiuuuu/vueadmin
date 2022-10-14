@@ -1,11 +1,12 @@
 <template>
-  <div class="block" style="padding-top:20px">
+  <div class="block">
     <el-pagination
       background
       :current-page="currentPage"
-      :page-sizes="[15,25,35]"
-      :page-size="15"
-      layout="total, sizes, prev, pager, next, jumper"
+      :page-sizes="pageSizes"
+      :page-size="pageSize"
+      :pager-count="5"
+      :layout="layout"
       :total="total"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -22,10 +23,48 @@ export default {
     total: {
       type: Number,
       default: 0
+    },
+    pageSizes: {
+      type: Array,
+      default: () => [30, 50, 100]
+    },
+    pageSize: {
+      type: Number,
+      default: 30
+    },
+    changePape: {
+      type: Function,
+      default: () => () => {}
+    }
+  },
+  data() {
+    return {
+      currentPage: 1,
+      windowWidth: document.documentElement.clientWidth,
+      layout: 'total, sizes, prev, pager, next, jumper',
+      priPageSize: this.pageSize
+    }
+  },
+  created() {
+    if (this.windowWidth < 400) {
+      this.layout = 'total, prev, pager, next'
     }
   },
   methods: {
-
+    handleSizeChange(val) {
+      this.priPageSize = val
+      this.changePape(this.currentPage, this.priPageSize)
+    },
+    handlePrevClick(val) {
+      this.handleCurrentChange(val)
+    },
+    handleNextClick(val) {
+      this.handleCurrentChange(val)
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val
+      this.changePape(this.currentPage, this.pageSize)
+    }
   }
 }
 </script>

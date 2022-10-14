@@ -90,6 +90,7 @@ const actions = {
         removeToken() // must remove  token  first
         resetRouter()
         commit('RESET_STATE')
+        localStorage.clear()
         resolve()
       }).catch(error => {
         reject(error)
@@ -118,7 +119,6 @@ const actions = {
         commit('SET_COMPANYNAME', companyName)
 
         localStorage.setItem('Dy_BranchId', branchId)
-        localStorage.setItem('Dy_CompanyName', companyName)
         resolve(data)
       })
     })

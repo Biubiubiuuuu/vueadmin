@@ -23,7 +23,7 @@ export function getCarrierRouteSelect() {
 
 export function getCurrencySelect() {
   return request({
-    url: '/Server/GetGoodsType',
+    url: '/Server/GetCurrencyType',
     method: 'post'
   })
 }

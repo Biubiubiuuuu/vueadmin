@@ -1,15 +1,16 @@
 <template>
-  <el-select ref="goodsTypeSelect" v-model="value" placeholder="包装类型" filterable clearable>
+  <el-select ref="goodsTypeSelect" v-model="selectVal" placeholder="货物类型" filterable clearable @change="selectChange">
     <el-option
       v-for="item in options"
       :key="item.id"
-      :label="item.cnName +'('+item.code+')'"
+      :label="item.name +'('+item.code+')'"
       :value="item.id"
     />
   </el-select>
 </template>
 
 <script>
+import { getGoodsTypeCache, setGoodsTypeCache } from '@/api/cache'
 import { getGoodsTypeSelect } from '@/api/select'
 
 export default {
@@ -40,10 +41,18 @@ export default {
   },
   methods: {
     getGoodsTypeSelect() {
-      getGoodsTypeSelect().then(resp => {
-        this.options = resp.data
-        console.info(resp)
-      })
+      var list = getGoodsTypeCache()
+      if (list === null || list === undefined) {
+        getGoodsTypeSelect().then(resp => {
+          this.options = resp.data
+          setGoodsTypeCache(this.options)
+        })
+      } else {
+        this.options = list
+      }
+    },
+    selectChange(val) {
+      this.$emit('goodsTypeSelectChange', val)
     }
   }
 }

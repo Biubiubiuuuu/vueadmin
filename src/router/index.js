@@ -38,9 +38,16 @@ export const constantRoutes = [
     meta: { title: '用户登录' }
   },
   {
-    path: '/404',
-    component: () => import('@/views/404'),
-    hidden: true
+    path: '/tracking',
+    component: () => import('@/views/track/index'),
+    hidden: true,
+    meta: { title: '轨迹跟踪' }
+  },
+  {
+    path: '/register',
+    component: () => import('@/views/register/index'),
+    hidden: true,
+    meta: { title: '用户注册' }
   },
   {
     path: '/',
@@ -51,22 +58,14 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/index'),
         name: 'Index',
-        meta: { title: '首页', icon: 'dashboard', affix: true, breadcrumb: false }
+        meta: { title: 'dashboard', icon: 'dashboard', affix: true, breadcrumb: false }
       }
     ]
   },
   {
-    path: '/user',
-    component: Layout,
-    redirect: 'noredirect',
-    children: [
-      {
-        path: 'profile',
-        component: () => import('@/views/user'),
-        name: 'Profile',
-        meta: { title: '个人中心', icon: 'user' }
-      }
-    ]
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
   }
 ]
 

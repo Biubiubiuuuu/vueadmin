@@ -1,15 +1,16 @@
 <template>
-  <el-select ref="packTypeSelect" v-model="value" placeholder="包装方式" filterable clearable>
+  <el-select ref="packTypeSelect" v-model="selectVal" placeholder="包装方式" filterable clearable>
     <el-option
       v-for="item in options"
       :key="item.id"
-      :label="item.cnName +'('+item.code+')'"
+      :label="item.name +'('+item.code+')'"
       :value="item.id"
     />
   </el-select>
 </template>
 
 <script>
+import { getPackTypeCache, setPackTypeCache } from '@/api/cache'
 import { getPackTypeSelect } from '@/api/select'
 
 export default {
@@ -40,10 +41,15 @@ export default {
   },
   methods: {
     getPackTypeSelect() {
-      getPackTypeSelect().then(resp => {
-        this.options = resp.data
-        console.info(resp)
-      })
+      var list = getPackTypeCache()
+      if (list === null || list === undefined) {
+        getPackTypeSelect().then(resp => {
+          this.options = resp.data
+          setPackTypeCache(this.options)
+        })
+      } else {
+        this.options = list
+      }
     }
   }
 }

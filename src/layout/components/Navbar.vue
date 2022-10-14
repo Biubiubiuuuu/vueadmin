@@ -7,15 +7,18 @@
     />
 
     <breadcrumb class="breadcrumb-container" />
-
     <div class="right-menu">
-      <el-dropdown class="avatar-container" trigger="click">
+      <template>
+        <Screenfull id="screenfull" class="right-menu-item hover-effect" style="font-size: 25px;line-height: 50px;" />
+        <Language class="right-menu-item hover-effect" style="font-size: 25px;line-height: 50px;" />
+      </template>
+      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
           <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar">
           <span class="avatar-username">{{ name }}</span>
           <i class="el-icon-caret-bottom" />
         </div>
-        <el-dropdown-menu slot="dropdown" class="user-dropdown">
+        <el-dropdown-menu slot="dropdown">
           <router-link to="/">
             <el-dropdown-item> 主页 </el-dropdown-item>
           </router-link>
@@ -35,11 +38,15 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import Language from '@/components/Select/Language'
+import Screenfull from '@/components/Screenfull'
 
 export default {
   components: {
     Breadcrumb,
-    Hamburger
+    Hamburger,
+    Language,
+    Screenfull
   },
   computed: {
     ...mapGetters(['sidebar', 'avatar', 'name'])
@@ -62,33 +69,32 @@ export default {
   overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
-
+  box-shadow: 0 1px 4px rgba(0,21,41,.08);
   .hamburger-container {
     line-height: 46px;
     height: 100%;
     float: left;
     cursor: pointer;
-    transition: background 0.3s;
-    -webkit-tap-highlight-color: transparent;
-
+    transition: background .3s;
+    -webkit-tap-highlight-color:transparent;
     &:hover {
-      background: rgba(0, 0, 0, 0.025);
+      background: rgba(0, 0, 0, .025)
     }
   }
-
   .breadcrumb-container {
     float: left;
   }
-
+  .errLog-container {
+    display: inline-block;
+    vertical-align: top;
+  }
   .right-menu {
     float: right;
     height: 100%;
-
+    line-height: 50px;
     &:focus {
       outline: none;
     }
-
     .right-menu-item {
       display: inline-block;
       padding: 0 8px;
@@ -96,40 +102,31 @@ export default {
       font-size: 18px;
       color: #5a5e66;
       vertical-align: text-bottom;
-
       &.hover-effect {
         cursor: pointer;
-        transition: background 0.3s;
-
+        transition: background .3s;
         &:hover {
-          background: rgba(0, 0, 0, 0.025);
+          background: rgba(0, 0, 0, .025)
         }
       }
     }
-
     .avatar-container {
-      margin-right: 10px;
-
+      margin-right: 30px;
       .avatar-wrapper {
         margin-top: 5px;
         position: relative;
-
         .user-avatar {
-          vertical-align: middle;
+          cursor: pointer;
           width: 40px;
           height: 40px;
           border-radius: 10px;
         }
-
-        .avatar-username {
-          margin-right: 5px;
-          margin-left: 5px;
-          vertical-align: middle;
-        }
-
         .el-icon-caret-bottom {
+          cursor: pointer;
+          position: absolute;
+          right: -20px;
+          top: 25px;
           font-size: 12px;
-          vertical-align: middle;
         }
       }
     }

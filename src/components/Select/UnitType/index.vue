@@ -1,15 +1,16 @@
 <template>
-  <el-select ref="unitTypeSelect" v-model="value" placeholder="币种类型" filterable clearable>
+  <el-select ref="unitTypeSelect" v-model="selectVal" placeholder="计量单位" :size="size" filterable clearable :disabled="disabled ">
     <el-option
       v-for="item in options"
       :key="item.id"
-      :label="item.cnName +'('+item.code+')'"
+      :label="item.name +'('+item.code+')'"
       :value="item.id"
     />
   </el-select>
 </template>
 
 <script>
+import { getUnitTypeCache, setUnitTypeCache } from '@/api/cache'
 import { getUnitTypeSelect } from '@/api/select'
 
 export default {
@@ -18,6 +19,14 @@ export default {
     value: {
       type: Number,
       default: undefined
+    },
+    size: {
+      type: String,
+      default: 'small'
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -40,10 +49,15 @@ export default {
   },
   methods: {
     getUnitTypeSelect() {
-      getUnitTypeSelect().then(resp => {
-        this.options = resp.data
-        console.info(resp)
-      })
+      var list = getUnitTypeCache()
+      if (list === null || list === undefined) {
+        getUnitTypeSelect().then(resp => {
+          this.options = resp.data
+          setUnitTypeCache(this.options)
+        })
+      } else {
+        this.options = list
+      }
     }
   }
 }

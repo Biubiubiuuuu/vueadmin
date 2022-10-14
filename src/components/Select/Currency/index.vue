@@ -3,7 +3,7 @@
     <el-option
       v-for="item in options"
       :key="item.id"
-      :label="item.cnName +'('+item.code+')'"
+      :label="item.name +'('+item.code+')'"
       :value="item.id"
     />
   </el-select>
@@ -42,7 +42,6 @@ export default {
     getCurrencySelect() {
       getCurrencySelect().then(resp => {
         this.options = resp.data
-        console.info(resp)
       })
     }
   }

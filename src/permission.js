@@ -4,6 +4,7 @@ import { Message } from 'element-ui'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
+import { delEmptyQueryNodes } from '@/utils/tool'
 import getPageTitle from '@/utils/get-page-title'
 import Layout from '@/layout'
 
@@ -11,7 +12,7 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const _import = require('./router/_import_' + process.env.NODE_ENV) // 获取组件的方法
 
-const whiteList = ['/login'] // no redirect whitelist
+const whiteList = ['/login', '/label', '/tracking', '/register'] // 不验证登录
 
 router.beforeEach(async (to, from, next) => {
   // start progress bar
@@ -39,7 +40,9 @@ router.beforeEach(async (to, from, next) => {
             global.antRouter = []
             next()
           }
-          const loadMenuData = filterAsyncRouter(store.getters.menus)
+          var loadMenuData = filterAsyncRouter(store.getters.menus)
+          // 添加404
+          loadMenuData.push({ path: '*', redirect: '/404' })
           router.addRoutes(loadMenuData)
           global.antRouter = loadMenuData
           next({ ...to, replace: true })
@@ -54,7 +57,6 @@ router.beforeEach(async (to, from, next) => {
     }
   } else {
     /* has no token*/
-
     if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly
       next()
@@ -72,11 +74,15 @@ router.afterEach((to) => {
 })
 
 function filterAsyncRouter(asyncRouterMap) {
-  const accessedRouters = asyncRouterMap.filter(route => {
+  const accessedRouters = asyncRouterMap.filter((route) => {
+    route = delEmptyQueryNodes(route)
     if (route.component) {
       if (route.component === 'Layout') {
         route.redirect = 'noRedirect'
         route.component = Layout
+        if (route.name) {
+          route.alwaysShow = true
+        }
       } else {
         route.component = _import(route.component) // 导入组件
       }
@@ -89,3 +95,4 @@ function filterAsyncRouter(asyncRouterMap) {
 
   return accessedRouters
 }
+
