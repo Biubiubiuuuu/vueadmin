@@ -4,6 +4,7 @@ export default {
     dashboard: '首页'
   },
   login: {
+    company: '国际物流系统',
     password: '密码登录',
     QRCode: '扫码登录',
     usernameplaceholder: '请输入用户名',
@@ -16,5 +17,15 @@ export default {
     scan: '扫一扫',
     openWeChat: '打开微信',
     justloginin: '即可登录'
+  },
+  index: {
+    home: '主页',
+    personalcenter: '个人中心',
+    screenfull: '全屏',
+    noscreenfull: '退出全屏',
+    operationnotification: '操作通知',
+    systemnotification: '系统通知',
+    nonotice: '暂无通知',
+    logout: '注销'
   }
 }

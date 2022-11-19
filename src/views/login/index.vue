@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <div class="elbacklanguage">
-      <language style="width: 100%;" />
+      <language style="width: 100%;" :is-background="true" />
     </div>
     <div class="login-background" />
     <el-dialog
@@ -94,14 +94,14 @@ export default {
   data() {
     const validateUsername = (rule, value, callback) => {
       if (value.length === 0) {
-        callback(new Error('请输入正确的用户名'))
+        callback(new Error(this.$i18n.t('login.usernameplaceholder')))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('密码不能少于6位'))
+        callback(new Error(this.$i18n.t('login.passwordplaceholder')))
       } else {
         callback()
       }
@@ -126,7 +126,7 @@ export default {
           { required: true, trigger: 'blur', validator: validatePassword }
         ]
       },
-      companyName: '国际物流系统',
+      companyName: this.$i18n.t('login.company'),
       loading: false,
       passwordType: 'password',
       redirect: undefined

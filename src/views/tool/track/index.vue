@@ -233,7 +233,7 @@ export default {
       status: 2,
       preBillCode: '1223123',
       preTranCode: '123123',
-      tranWayCode: '123213',
+      TranBillCode: '123213',
       countryId: 1,
       buildDate: '11',
       details: [{
@@ -260,7 +260,7 @@ export default {
       status: 3,
       preBillCode: '1223123',
       preTranCode: '123123',
-      tranWayCode: '123213',
+      TranBillCode: '123213',
       countryId: 1,
       buildDate: '11',
       details: [{

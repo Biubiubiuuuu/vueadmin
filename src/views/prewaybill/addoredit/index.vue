@@ -54,13 +54,14 @@
                       :xs="24"
                     >
                       <el-form-item
-                        label="目的地"
-                        prop="consignee.countryCode"
+                        label="运单号"
+                        prop="waybillCode"
                       >
-                        <CountryCode
-                          v-model="ruleForm.consignee.countryCode"
-                          style="width:100%"
-                          @setValue="(val) => ruleForm.consignee.countryCode = val"
+                        <el-input
+                          v-model="ruleForm.waybillCode"
+                          placeholder="选择填写"
+                          clearable
+                          size="small"
                         />
                       </el-form-item>
                     </el-col>
@@ -69,18 +70,34 @@
                       :xs="24"
                     >
                       <el-form-item
-                        label="运输方式"
-                        prop="carrierRouteCode"
+                        label="目的地"
+                        prop="countryId"
                       >
-                        <CarrierRouteCode
-                          v-model="ruleForm.carrierRouteCode"
+                        <CountryId
+                          v-model="ruleForm.countryId"
                           style="width:100%"
-                          @setValue="(val) => ruleForm.carrierRouteCode = val"
+                          @setValue="(val) => ruleForm.countryId = val"
                         />
                       </el-form-item>
                     </el-col>
                   </el-row>
                   <el-row :gutter="20">
+                    <el-col
+                      :lg="8"
+                      :xs="24"
+                    >
+                      <el-form-item
+                        label="运输方式"
+                        prop="carrierRouteId"
+                      >
+                        <CarrierRouteId
+                          v-model="ruleForm.carrierRouteId"
+                          style="width:100%"
+                          :get-extra-service-kinds-hanld="getExtraServiceKindsHanld"
+                          @setValue="(val) => ruleForm.carrierRouteId = val"
+                        />
+                      </el-form-item>
+                    </el-col>
                     <el-col
                       :lg="8"
                       :xs="24"
@@ -124,6 +141,8 @@
                         />
                       </el-form-item>
                     </el-col>
+                  </el-row>
+                  <el-row :gutter="20">
                     <el-col
                       :lg="8"
                       :xs="24"
@@ -139,8 +158,6 @@
                         />
                       </el-form-item>
                     </el-col>
-                  </el-row>
-                  <el-row :gutter="20">
                     <el-col
                       :lg="8"
                       :xs="24"
@@ -158,9 +175,8 @@
                       </el-form-item>
                     </el-col>
                     <el-col
-                      :lg="16"
+                      :lg="8"
                       :xs="24"
-                      :span="16"
                     >
                       <el-form-item
                         label="备注"
@@ -171,9 +187,22 @@
                           type="textarea"
                           placeholder="请输入备注"
                           maxlength="200"
-                          rows="3"
+                          rows="1"
                           show-word-limit
                         />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                  <el-row :gutter="20">
+                    <el-col
+                      :lg="24"
+                      :xs="24"
+                    >
+                      <el-form-item
+                        label="额外服务"
+                        prop="extraServices"
+                      >
+                        <ExtraService ref="extraServices" :set-extra-service="setExtraService" />
                       </el-form-item>
                     </el-col>
                   </el-row>
@@ -531,12 +560,12 @@
                       >
                         <el-form-item
                           label="发件人国家/地区"
-                          prop="sender.countryCode"
+                          prop="sender.countryId"
                         >
-                          <CountryCode
-                            v-model="ruleForm.sender.countryCode"
+                          <CountryId
+                            v-model="ruleForm.sender.countryId"
                             style="width:100%"
-                            @setValue="(val) => ruleForm.sender.countryCode = val"
+                            @setValue="(val) => ruleForm.sender.countryId = val"
                           />
                         </el-form-item>
                       </el-col>
@@ -802,12 +831,17 @@
               :xs="24"
               style="background-color: #FFFFFF;float: right;margin-top: 10px;min-height:300px;"
             >
-              <el-tabs v-model="activeName">
-                <el-tab-pane
-                  label="额外信息"
-                  name="first"
-                />
-              </el-tabs>
+              <div style="position: relative;">
+                <el-tabs v-model="activeName" class="mytabb">
+                  <el-tab-pane
+                    label="其他"
+                    name="first"
+                  />
+                  <el-form-item prop="extraServiceKinds">
+                    <ExtraServiceKind ref="extraServiceKindForm" />
+                  </el-form-item>
+                </el-tabs>
+              </div>
             </el-col>
           </div>
           <el-col
@@ -1606,8 +1640,10 @@
 
 <script>
 import ElImageViewer from 'element-ui/packages/image/src/image-viewer'
-import CarrierRouteCode from '@/components/Select/CarrierRouteCode'
-import CountryCode from '@/components/Select/CountryCode'
+import CarrierRouteId from '@/components/Select/CarrierRouteId'
+import CountryId from '@/components/Select/CountryId'
+import ExtraService from '@/components/ExtraService'
+import ExtraServiceKind from '@/components/ExtraServiceKind'
 import PackType from '@/components/Select/PackType'
 import UnitType from '@/components/Select/UnitType'
 import GoodsType from '@/components/Select/GoodsType'
@@ -1628,20 +1664,22 @@ import { searchAddressbook } from '@/api/tool'
 export default {
   name: 'Addoredit',
   components: {
+    ExtraService,
     Pdf,
     Other,
     Word,
     Excel,
     ElImageViewer,
-    CarrierRouteCode,
-    CountryCode,
+    CarrierRouteId,
+    CountryId,
     PackType,
     UnitType,
     GoodsType,
     Currency,
     Consignee,
     Sender,
-    Invoice
+    Invoice,
+    ExtraServiceKind
   },
   data() {
     var validateMobile = (rule, value, callback) => {
@@ -1673,14 +1711,14 @@ export default {
       }
     }
     var validateCertificateCode = (rule, value, callback) => {
-      if (value === '' && this.ruleForm.consignee.certificateType !== '') {
+      if (value === '' && (this.ruleForm.consignee.certificateType !== '' && this.ruleForm.consignee.certificateType !== 0)) {
         callback(new Error('证件类型不为空时，收件人证件号码必填！'))
       } else {
         callback()
       }
     }
     var validateCertificatePeriod = (rule, value, callback) => {
-      if (value === '' && this.ruleForm.consignee.certificateType !== '') {
+      if (value === '' && (this.ruleForm.consignee.certificateType !== '' && this.ruleForm.consignee.certificateType !== 0)) {
         callback(new Error('证件类型不为空时，收件人证件有效期必填！'))
       } else {
         callback()
@@ -1708,6 +1746,7 @@ export default {
       fullscreenCargovolumes: false,
       SenderAndReceiver: 'Receiver',
       certificateTypeSelect: [
+        { value: 0, label: '无' },
         { value: 1, label: '身份证' },
         { value: 2, label: '护照' }
       ],
@@ -1721,17 +1760,17 @@ export default {
       choisedCargovolumes: [],
       ruleForm: {
         preBillCode: '',
-        carrierRouteCode: '',
+        carrierRouteId: 0,
         pack: 1,
         goodsType: 1,
         preWeight: 0.2,
         goodsNum: 1,
         remark: '',
         currency: 1,
+        countryId: 0,
         consignee: {
           name: '',
           company: '',
-          countryCode: '',
           province: '',
           city: '',
           address: '',
@@ -1741,14 +1780,14 @@ export default {
           email: '',
           taxID: '',
           doorplate: '',
-          certificateType: '',
+          certificateType: 0,
           certificateCode: '',
           certificatePeriod: ''
         },
         sender: {
           name: '',
           company: '',
-          countryCode: '',
+          countryId: 0,
           province: '',
           city: '',
           address: '',
@@ -1760,7 +1799,9 @@ export default {
         },
         files: [],
         invoices: [],
-        cargovolumes: []
+        cargovolumes: [],
+        extraServiceKinds: [],
+        extraServices: []
       },
       rulesForm: {
         preBillCode: [
@@ -1788,7 +1829,7 @@ export default {
             trigger: ['blur', 'change']
           }
         ],
-        'consignee.countryCode': [
+        countryId: [
           {
             required: true,
             message: '请选择目的地',
@@ -1852,7 +1893,7 @@ export default {
         'sender.name': [
           { required: true, message: '请输入发件人姓名', trigger: ['blur', 'change'] }
         ],
-        'sender.countryCode': [
+        'sender.countryId': [
           { required: true, message: '请选择发件人国家/地区', trigger: ['blur', 'change'] }
         ],
         'sender.address': [
@@ -1898,9 +1939,6 @@ export default {
     getOrder(id) {
       getDetail(id).then((resp) => {
         this.ruleForm = resp.data
-        var countrys = getCountryListCache()
-        this.ruleForm.consignee.countryCode = countrys.filter((item) => item.id === this.ruleForm.countryId)[0].code.toString()
-        this.ruleForm.sender.countryCode = countrys.filter((item) => item.id === this.ruleForm.sender.countryId)[0].code.toString()
         if (this.ruleForm.consignee.certificateType === 0) {
           this.ruleForm.consignee.certificateType = ''
         }
@@ -1917,13 +1955,14 @@ export default {
         }
         this.goodsTypeSelectChange(this.ruleForm.goodsType)
         this.oldCargovolumes = JSON.parse(JSON.stringify(this.ruleForm.cargovolumes))
+        this.$refs.extraServiceKindForm.getExtraServiceKinds(this.ruleForm.carrierRouteId)
+        this.$refs.extraServiceKindForm.setExtraServiceKinds(this.ruleForm.extraServiceKinds)
+        this.$refs.extraServices.setExtraServices(Array.isArray(this.ruleForm.extraServices) ? this.ruleForm.extraServices.map(x => (x.id)) : [])
       })
     },
     getSender() {
-      var countrys = getCountryListCache()
       getCommonSenderDefaultAsync(0).then((resp) => {
         this.ruleForm.sender = resp.data
-        this.ruleForm.sender.countryCode = countrys.filter((item) => item.id === this.ruleForm.sender.countryId)[0].code.toString()
       })
     },
     onCreateOrder() {
@@ -2363,9 +2402,15 @@ export default {
     save(formName) {
       this.$refs[formName].validate((valid) => {
         if (!valid) {
-          this.$message.error('请填写必填项后重新提交')
+          this.$message.error('请根据提示，填充并重新提交数据')
           return false
         }
+        // 如果有额外信息，先验证规则
+        this.$refs.extraServiceKindForm.validateHandle((valid) => {
+          if (!valid) {
+            this.$message.error('请根据提示，填充并重新提交数据')
+          }
+        })
         this.ruleForm.invoices.forEach((item) => {
           item.quantity = parseInt(item.quantity)
           item.unitcharge = parseFloat(item.unitcharge)
@@ -2381,6 +2426,40 @@ export default {
             .toString()
             .substring(0, 10)}`
           : ''
+        this.ruleForm.extraServiceKinds = []
+        // 提取数据
+        var extraServiceKinds = JSON.parse(JSON.stringify(this.$refs.extraServiceKindForm.ruleForm))
+        if (extraServiceKinds) {
+          extraServiceKinds.data.forEach((item) => {
+            if (item.extraServiceKindId) {
+              if (!Array.isArray(item.extraServiceKindId)) {
+                item.extraServiceKindId = [item.extraServiceKindId]
+              }
+              if (item.domains) {
+                item.extraServiceKindId.forEach(c => {
+                  var filter = item.domains.filter(a => a.id === c)
+                  if (filter) {
+                    filter.forEach(ff => {
+                      if (ff.domains && ff.domains.length > 0) {
+                        this.ruleForm.extraServiceKinds.push({ extraServiceKindId: ff.id, value: '' })
+                        var filterValues = ff.domains.filter(a => a.value !== '')
+                        if (filterValues && filterValues.length > 0) {
+                          filterValues.forEach(f => {
+                            this.ruleForm.extraServiceKinds.push({ extraServiceKindId: f.id, value: f.value })
+                          })
+                        }
+                      } else {
+                        this.ruleForm.extraServiceKinds.push({ extraServiceKindId: ff.id, value: '' })
+                      }
+                    })
+                  }
+                })
+              } else {
+                this.ruleForm.extraServiceKinds.push({ extraServiceKindId: item.id, value: item.value })
+              }
+            }
+          })
+        }
         const loading = this.$loading({
           lock: true,
           text: 'Loading',
@@ -2401,6 +2480,16 @@ export default {
           loading.close()
         }
       })
+    },
+    platFn(list) {
+      let res = []
+      res = list.concat(...list.map(item => {
+        if (item.domains instanceof Array && item.domains.length > 0) {
+          return this.platFn(item.domains)
+        }
+        return null
+      }).filter(o => o instanceof Array && o.length > 0))
+      return res
     },
     closeChoiceDialogClick() {
       this.centerChoiceDialogVisible = false
@@ -2478,6 +2567,13 @@ export default {
         this.addressPostalCodebook = []
         this.addressPostalCodebook.push({ postalCode: this.ruleForm.consignee.postCode, city: '' })
       }
+    },
+    getExtraServiceKindsHanld(id) {
+      this.$refs.extraServiceKindForm.getExtraServiceKinds(id)
+      this.$refs.extraServiceKindForm.setExtraServiceKinds(this.ruleForm.extraServiceKinds)
+    },
+    setExtraService(v) {
+      this.ruleForm.extraServices = Array.isArray(v) ? v : JSON.parse(v)
     }
   }
 }
@@ -2518,6 +2614,10 @@ export default {
     font-size: 25px;
     line-height: 46px;
   }
+}
+
+::v-deep .mytabb .el-tabs__header{
+  margin: 0px 0px 0px 0px;
 }
 
 .wrap {

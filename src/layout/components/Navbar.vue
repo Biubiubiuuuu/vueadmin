@@ -5,28 +5,28 @@
       class="hamburger-container"
       @toggleClick="toggleSideBar"
     />
-
     <breadcrumb class="breadcrumb-container" />
     <div class="right-menu">
       <template>
-        <Screenfull id="screenfull" class="right-menu-item hover-effect" style="font-size: 25px;line-height: 50px;" />
-        <Language class="right-menu-item hover-effect" style="font-size: 25px;line-height: 50px;" />
+        <Screenfull id="screenfull" class="right-menu-item hover-effect" style="line-height: 55px;" />
+        <Language class="right-menu-item hover-effect" style="line-height: 55px;" />
+        <News class="right-menu-item hover-effect" style="line-height: 55px;" />
       </template>
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
           <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar">
-          <span class="avatar-username">{{ name }}</span>
+          <span class="avatar-username"> {{ name }}</span>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
           <router-link to="/">
-            <el-dropdown-item> 主页 </el-dropdown-item>
+            <el-dropdown-item> {{ $t('index.home') }} </el-dropdown-item>
           </router-link>
           <router-link to="/">
-            <el-dropdown-item> 个人中心 </el-dropdown-item>
+            <el-dropdown-item> {{ $t('index.personalcenter') }} </el-dropdown-item>
           </router-link>
           <el-dropdown-item divided @click.native="logout">
-            <span style="display: block">退出登录</span>
+            <span style="display: block">{{ $t('index.logout') }} </span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -40,13 +40,15 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import Language from '@/components/Select/Language'
 import Screenfull from '@/components/Screenfull'
+import News from '@/components/News'
 
 export default {
   components: {
     Breadcrumb,
     Hamburger,
     Language,
-    Screenfull
+    Screenfull,
+    News
   },
   computed: {
     ...mapGetters(['sidebar', 'avatar', 'name'])
@@ -111,22 +113,27 @@ export default {
       }
     }
     .avatar-container {
-      margin-right: 30px;
+      margin-right: 10px;
+
       .avatar-wrapper {
-        margin-top: 5px;
         position: relative;
+
         .user-avatar {
-          cursor: pointer;
+          vertical-align: middle;
           width: 40px;
           height: 40px;
           border-radius: 10px;
         }
+
+        .avatar-username {
+          margin-right: 5px;
+          margin-left: 5px;
+          vertical-align: middle;
+        }
+
         .el-icon-caret-bottom {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
           font-size: 12px;
+          vertical-align: middle;
         }
       }
     }

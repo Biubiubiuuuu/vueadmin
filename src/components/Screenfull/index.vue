@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-tooltip :content="isFullscreen?'退出全屏':'全屏'">
+    <el-tooltip :content="isFullscreen?$t('index.noscreenfull'):$t('index.screenfull')">
       <i :class="isFullscreen?'icon iconfont el-icon-dy-tuichuquanping':'icon iconfont el-icon-dy-quanping'" style="font-size: 25px;" @click="click" />
     </el-tooltip>
   </div>

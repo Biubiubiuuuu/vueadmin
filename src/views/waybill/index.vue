@@ -171,7 +171,7 @@
           align="center"
         >
           <template slot-scope="props">
-            <el-link>{{ props.row.tranWayCode }}</el-link>
+            <el-link>{{ props.row.TranBillCode }}</el-link>
           </template>
         </el-table-column>
         <el-table-column

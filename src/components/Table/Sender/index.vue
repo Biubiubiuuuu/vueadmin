@@ -6,7 +6,7 @@
         <el-col :lg="8" :xs="24">
           <el-form-item style="margin-top: 5px">
             <el-button type="primary" size="medium" icon="el-icon-search" @click="onQuery">查询</el-button>
-            <el-button plain size="medium" icon="el-icon-refresh" @click="resetQueryForm('queryForm')">重置</el-button>
+            <el-button plain size="medium" icon="el-icon-refresh" @click="resetQueryForm()">重置</el-button>
           </el-form-item>
         </el-col>
       </el-form>
@@ -140,7 +140,7 @@
           <el-popconfirm
             title="确定删除此条数据吗？"
             style="display: revert;margin-left: 10px;"
-            @onConfirm="handleDataDelete(scope.row.id)"
+            @confirm="handleDataDelete(scope.row.id)"
           >
             <el-button
               slot="reference"
@@ -159,7 +159,7 @@
       width="50%"
       :close-on-click-modal="false"
       :fullscreen="fullscreen"
-      @close="closeDialogClick('ruleForm')"
+      @close="closeDialogClick()"
     >
       <el-form ref="ruleForm" :model="ruleForm" :rules="rulesForm" size="small">
         <el-row :gutter="20">
@@ -403,11 +403,11 @@ export default {
         })
       })
     },
-    closeDialogClick(formName) {
-      this.resetForm(formName)
+    closeDialogClick() {
+      this.resetForm()
       this.centerDialogVisible = false
     },
-    resetForm(formName) {
+    resetForm() {
       this.ruleForm = {
         name: '',
         company: '',
@@ -423,7 +423,7 @@ export default {
         taxID: '',
         isDefault: false
       }
-      this.$refs[formName].resetFields()
+      this.$refs.ruleForm.resetFields()
     },
     dblClick(row, column, event) {
       this.choseData(row)
@@ -434,7 +434,6 @@ export default {
         maxResultCount: 30,
         name: ''
       }
-      this.$refs[formName].resetFields()
       this.getCommonSenderListAsync()
     },
     onQuery() {

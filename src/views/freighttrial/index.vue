@@ -7,11 +7,11 @@
             <el-form ref="ruleForm" :model="ruleForm" :rules="rulesForm" size="small" label-width="80px">
               <el-row type="flex" class="row-bg" justify="center">
                 <el-col :sm="12" :md="10" :lg="8" :xl="5" :xs="24">
-                  <el-form-item label="目的地" prop="countryId">
-                    <CountryId
-                      v-model="ruleForm.countryId"
+                  <el-form-item label="目的地" prop="countryCode">
+                    <CountryCode
+                      v-model="ruleForm.countryCode"
                       style="width: 100%"
-                      @setValue="(val) => (ruleForm.countryId = val)"
+                      @setValue="(val) => (ruleForm.countryCode = val)"
                     />
                   </el-form-item>
                   <el-form-item label="货物类型" prop="goodsType">
@@ -102,7 +102,7 @@
 </template>
 
 <script>
-import CountryId from '@/components/Select/CountryId'
+import CountryCode from '@/components/Select/CountryCode'
 import GoodsType from '@/components/Select/GoodsType'
 import Freight from '@/components/Table/Freight'
 import PackType from '@/components/Select/PackType'
@@ -111,7 +111,7 @@ import { getCountryListCache, getPackTypeCache, getGoodsTypeCache } from '@/api/
 export default {
   name: 'Freighttrial',
   components: {
-    CountryId,
+    CountryCode,
     GoodsType,
     PackType,
     Freight
@@ -164,7 +164,7 @@ export default {
         types: []
       },
       ruleForm: {
-        countryId: undefined,
+        countryCode: '',
         weight: '',
         pack: 1,
         goodsType: 1,
@@ -174,7 +174,7 @@ export default {
         types: []
       },
       rulesForm: {
-        countryId: {
+        countryCode: {
           required: true,
           message: '请选择目的地',
           trigger: ['blur', 'change']
@@ -205,7 +205,7 @@ export default {
           return false
         }
         this.dataForm = JSON.parse(JSON.stringify(this.ruleForm))
-        this.dataForm.countryName = getCountryListCache().find(item => item.id === this.ruleForm.countryId).cnName
+        this.dataForm.countryName = getCountryListCache().find(item => item.id === this.ruleForm.countryCode).cnName
         this.dataForm.goodsTypeDes = getGoodsTypeCache().find(item => item.id === this.ruleForm.goodsType).name
         this.dataForm.packDes = getPackTypeCache().find(item => item.id === this.ruleForm.pack).name
         if (this.ruleForm.types) {

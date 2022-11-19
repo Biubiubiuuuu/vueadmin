@@ -129,3 +129,21 @@ export function printInvoiceLabelAsync(data) {
     data
   })
 }
+
+export function getExtraServiceKindAsync(data) {
+  return request({
+    url: '/CarrierRoute/GetExtraServiceKindAsync',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
+
+export function getSharedTranParametersListAsync() {
+  return request({
+    url: '/SharedTran/GetSharedTranParametersListAsync',
+    method: 'post'
+  })
+}

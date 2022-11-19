@@ -1,5 +1,5 @@
 <template>
-  <el-select ref="CarrierRouteIdSelect" v-model="selectVal" placeholder="运输方式" filterable clearable>
+  <el-select ref="CarrierRouteIdSelect" v-model="selectVal" placeholder="运输方式" filterable clearable @change="dataChange">
     <el-option
       v-for="item in options"
       :key="item.id"
@@ -19,6 +19,10 @@ export default {
     value: {
       type: Number,
       default: undefined
+    },
+    getExtraServiceKindsHanld: {
+      type: Function,
+      default: null
     }
   },
   data() {
@@ -50,6 +54,9 @@ export default {
       } else {
         this.options = list
       }
+    },
+    dataChange(v) {
+      this.getExtraServiceKindsHanld(v)
     }
   }
 }

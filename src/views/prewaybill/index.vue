@@ -284,7 +284,7 @@
         </el-col>
         <el-col
           v-if="status == 1 || status == 2 || status == 3"
-          style="width: 55px;margin-top: 5px;"
+          style="width: 58px;margin-top: 5px;"
         >
           <button
             type="button"
@@ -327,7 +327,7 @@
               class="icon iconfont el-icon-dy-776bianjiqi_congcaogaoxiangjiazai"
               style="vertical-align: -10%"
             />
-            <span>提交删除</span>
+            <span>作废订单</span>
           </button>
         </el-col>
         <el-col
@@ -359,7 +359,7 @@
               class="icon iconfont el-icon-dy-shanchu"
               style="vertical-align: -10%"
             />
-            <span>彻底删除</span>
+            <span>删除</span>
           </button>
         </el-col>
       </el-row>
@@ -385,6 +385,8 @@
       <el-table
         ref="multipleTable"
         :key="itemKey"
+        height="500"
+        size="mini"
         :default-expand-all="true"
         :data="tableData"
         :header-cell-style="tableHeaderCellStyle"
@@ -422,7 +424,7 @@
               </div>
               <div style="width: 222px;" class="elcol">
                 转单号：
-                {{ props.row.tranWayCode ? props.row.tranWayCode : '--' }}
+                {{ props.row.tranBillCode ? props.row.tranBillCode : '--' }}
               </div>
               <div style="width: 400px;" class="elcol">
                 最新轨迹：
@@ -434,6 +436,7 @@
             </div>
             <el-table
               stripe
+              size="mini"
               :cell-style="cellStyle"
               :show-header="false"
               :data="[props.row]"
@@ -465,9 +468,9 @@
                 width="220"
               >
                 <template slot-scope="scope">
-                  <div>姓名：{{ scope.row.consignee ? scope.row.consignee.name :'-' }}</div>
+                  <div>姓名：{{ scope.row.consignee ? scope.row.consignee.name :'--' }}</div>
                   <div>目的地：{{ scope.row.countryId | countryIdFilter }} </div>
-                  <div>邮编：{{ scope.row.consignee ? scope.row.consignee.postCode :'-' }}</div>
+                  <div>邮编：{{ scope.row.consignee ? scope.row.consignee.postCode :'--' }}</div>
                 </template>
               </el-table-column>
               <el-table-column
@@ -535,7 +538,7 @@
                 <template slot-scope="scope">
                   <el-tooltip content="明细"><i class="el-icon-view" style="cursor: pointer;margin-right: 10px;" @click="preBillCodeClick(scope.row.id)" /></el-tooltip>
                   <el-tooltip content="复制"><i class="el-icon-document-copy" style="cursor: pointer;margin-right: 10px;" @click="handleCopyClick(scope.row.id)" /></el-tooltip>
-                  <el-tooltip v-if="scope.row.recState === 1 && scope.row.tranWayCode===''" content="修改"><i class="el-icon-edit" style="cursor: pointer;margin-right: 10px;" @click="editClick(scope.row.id)" /></el-tooltip>
+                  <el-tooltip v-if="scope.row.recState === 1 && scope.row.tranBillCode===''" content="修改"><i class="el-icon-edit" style="cursor: pointer;margin-right: 10px;" @click="editClick(scope.row.id)" /></el-tooltip>
                 </template>
               </el-table-column>
             </el-table>
@@ -625,7 +628,7 @@
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label"> 转单号 </template>
-          {{ detailedData.tranWayCode }}
+          {{ detailedData.tranBillCode }}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label"> 运输方式 </template>
@@ -1047,6 +1050,55 @@
         />
       </el-table>
       <el-descriptions
+        title="额外信息"
+        :column="3"
+        size="medium"
+        border
+        style="padding: 10px 20px 0px 20px"
+        :content-style="CS"
+        :label-style="LS"
+      />
+      <el-table
+        :data="detailedData.extraServiceKinds"
+        :header-cell-style="{ background: '#eef1f6', color: '#606266' }"
+        style="width: 100%; padding: 0px 20px 20px 20px"
+        size="small"
+        :show-overflow-tooltip="true"
+        highlight-current-row
+      >
+        <el-table-column
+          label="序号"
+          align="center"
+          width="50"
+        >
+          <template slot-scope="scope">
+            <div>
+              {{ scope.$index + 1 }}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="英文名称"
+          prop="enName"
+          align="center"
+          show-overflow-tooltip
+          min-width="200px"
+        />
+        <el-table-column
+          label="中文名称"
+          prop="cnName"
+          align="center"
+          show-overflow-tooltip
+          min-width="200px"
+        />
+        <el-table-column
+          label="值"
+          prop="value"
+          align="center"
+          min-width="150px"
+        />
+      </el-table>
+      <el-descriptions
         title="附件信息"
         :column="3"
         size="medium"
@@ -1181,24 +1233,8 @@ import CarrierRouteId from '@/components/Select/CarrierRouteId'
 import UnitType from '@/components/Select/UnitType'
 import CountryId from '@/components/Select/CountryId'
 import Client from '@/components/Select/Client'
-import {
-  getRecStateSumAsync,
-  getList,
-  submitReturnAsync,
-  submitSeizureAsync,
-  cancelSeizureOrReturnAsync,
-  removesAsync,
-  hardDeleteAsync,
-  getDetail,
-  convertToPreAsync,
-  printLabelAsync,
-  printInvoiceLabelAsync
-} from '@/api/prewaybill'
-import {
-  getCountryListCache,
-  getPackTypeCache,
-  getGoodsTypeCache
-} from '@/api/cache'
+import { getRecStateSumAsync, getList, submitReturnAsync, submitSeizureAsync, cancelSeizureOrReturnAsync, removesAsync, hardDeleteAsync, getDetail, convertToPreAsync, printLabelAsync, printInvoiceLabelAsync } from '@/api/prewaybill'
+import { getCountryListCache, getPackTypeCache, getGoodsTypeCache } from '@/api/cache'
 let that
 
 export default {
@@ -1252,7 +1288,7 @@ export default {
         case 3:
           return '已出仓'
         case 4:
-          return '已删除'
+          return '已作废'
       }
     }
   },
@@ -1969,5 +2005,9 @@ table .el-form-item--mini.el-form-item,
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+::v-deep .el-table td.el-table__cell, .el-table th.el-table__cell.is-leaf{
+  border-bottom: none;
 }
 </style>

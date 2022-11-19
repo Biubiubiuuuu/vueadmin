@@ -9,7 +9,7 @@ export function getCountrySelect() {
 
 export function getClientSelect() {
   return request({
-    url: '/Client/GetCurrentSelectAsync',
+    url: '/Client/GetChildrenSelectAsync',
     method: 'post'
   })
 }

@@ -11,6 +11,28 @@ export function getListAsync(data) {
   })
 }
 
+export function getAsync(data) {
+  return request({
+    url: '/Client/GetAsync',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
+
+export function postRemoveAsync(data) {
+  return request({
+    url: '/Client/PostRemoveAsync',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
+
 export function getCommonConsigneeAsync(data) {
   return request({
     url: '/Client/GetCommonConsigneeAsync',
@@ -185,6 +207,36 @@ export function changePassAsync(data) {
 export function changeStatusAsync(data) {
   return request({
     url: '/Client/ChangeStatusAsync',
+    method: 'post',
+    data
+  })
+}
+
+export function getTreeByCusWebAsync() {
+  return request({
+    url: '/Menu/GetTreeByCusWebAsync',
+    method: 'post'
+  })
+}
+
+export function getPrimaryClientCarrierRouteSelectAsync() {
+  return request({
+    url: '/CarrierRoute/GetPrimaryClientCarrierRouteSelectAsync',
+    method: 'post'
+  })
+}
+
+export function postCreateAsync(data) {
+  return request({
+    url: '/Client/PostCreateAsync',
+    method: 'post',
+    data
+  })
+}
+
+export function postModifyAsync(data) {
+  return request({
+    url: '/Client/PostModifyAsync',
     method: 'post',
     data
   })
