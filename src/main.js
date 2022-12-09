@@ -6,6 +6,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import i18n from './lang'
 import Clipboard from 'clipboard'
+import VueDND from 'awe-dnd'
 
 import '@/styles/index.scss' // global css
 import './assets/icon/iconfont.css' // 引入阿里巴巴图标库
@@ -32,6 +33,7 @@ import '@/permission' // permission control
 // }
 
 Vue.use(ElementUI, { i18n: (key, value) => i18n.t(key, value) })
+Vue.use(VueDND)
 
 Vue.config.productionTip = false
 Vue.prototype.Clipboard = Clipboard

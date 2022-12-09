@@ -1,8 +1,8 @@
-import request from '@/utils/request'
+import request from '@/utils/fileUpdate'
 
-export function upload(data) {
+export async function upload(data) {
   return request({
-    url: '/File/UploadAsync',
+    url: '/file',
     method: 'post',
     data
   })
@@ -10,11 +10,8 @@ export function upload(data) {
 
 export function deleteFile(data) {
   return request({
-    url: '/File/DeleteAsync',
+    url: '/file',
     method: 'post',
-    data,
-    headers: {
-      'Content-Type': 'application/json'
-    }
+    data
   })
 }

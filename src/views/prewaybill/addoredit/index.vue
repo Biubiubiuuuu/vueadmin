@@ -725,24 +725,25 @@
                   name="first"
                 />
                 <el-upload
-                  ref="upload"
+                  ref="uploadFile"
                   class="upload-demo"
-                  :show-file-list="false"
+                  action="#"
+                  multiple
+                  :on-change="onUploadChange"
+                  :auto-upload="false"
                   :limit="5"
-                  :before-upload="beforefileUpload"
                   :on-exceed="handleExceed"
-                  :http-request="fileUploadHttpRequest"
+                  :on-success="handleUploadSuccess"
                 >
                   <el-button
                     slot="trigger"
                     size="small"
                     type="primary"
                   >选取文件</el-button>
-                  <div
-                    slot="tip"
-                    class="el-upload__tip"
-                  >*最多可上传 5 个文件，单个文件大小不超过 2 MB</div>
+                  <div slot="tip" class="el-upload__tip">*最多可上传 5 个文件，单个文件大小不超过 2 MB</div>
+                  <div slot="tip" class="el-upload__tip">*只能上传.doc,.docx,.xlsx,.xls,.pdf,.png,.jpg,.gif文件</div>
                 </el-upload>
+                <div class="el-upload__tip">*以下是已上传的文件列表</div>
                 <el-table
                   :data="ruleForm.files"
                   size="small"
@@ -1651,15 +1652,16 @@ import Currency from '@/components/Select/Currency'
 import Consignee from '@/components/Table/Consignee'
 import Sender from '@/components/Table/Sender'
 import Invoice from '@/components/Table/Invoice'
+
 import Excel from '@/components/FilePreview/Excel'
 import Pdf from '@/components/FilePreview/Pdf'
 import Word from '@/components/FilePreview/Word'
 import Other from '@/components/FilePreview/Other'
 import { insert, getDetail, edit } from '@/api/prewaybill'
 import { getCommonSenderDefaultAsync } from '@/api/client'
-import { getCountryListCache } from '@/api/cache'
 import { upload, deleteFile } from '@/api/file'
 import { searchAddressbook } from '@/api/tool'
+import { newCode } from '@/utils/tool'
 
 export default {
   name: 'Addoredit',
@@ -1720,6 +1722,20 @@ export default {
     var validateCertificatePeriod = (rule, value, callback) => {
       if (value === '' && (this.ruleForm.consignee.certificateType !== '' && this.ruleForm.consignee.certificateType !== 0)) {
         callback(new Error('证件类型不为空时，收件人证件有效期必填！'))
+      } else {
+        callback()
+      }
+    }
+    var validateCountryId = (rule, value, callback) => {
+      if (value === 0 || value === '') {
+        callback(new Error('请选择国家/地区'))
+      } else {
+        callback()
+      }
+    }
+    var validatecarrierRouteId = (rule, value, callback) => {
+      if (value === 0 || value === '') {
+        callback(new Error('请选择承运路线'))
       } else {
         callback()
       }
@@ -1829,20 +1845,8 @@ export default {
             trigger: ['blur', 'change']
           }
         ],
-        countryId: [
-          {
-            required: true,
-            message: '请选择目的地',
-            trigger: ['blur', 'change']
-          }
-        ],
-        carrierRouteCode: [
-          {
-            required: true,
-            message: '请选择运输方式',
-            trigger: ['blur', 'change']
-          }
-        ],
+        countryId: [{ validator: validateCountryId, trigger: ['blur', 'change'] }],
+        carrierRouteId: [{ validator: validatecarrierRouteId, trigger: ['blur', 'change'] }],
         goodsNum: [
           {
             required: true,
@@ -1893,9 +1897,7 @@ export default {
         'sender.name': [
           { required: true, message: '请输入发件人姓名', trigger: ['blur', 'change'] }
         ],
-        'sender.countryId': [
-          { required: true, message: '请选择发件人国家/地区', trigger: ['blur', 'change'] }
-        ],
+        'sender.countryId': [{ validator: validateCountryId, trigger: ['blur', 'change'] }],
         'sender.address': [
           { required: true, message: '请输入发件人地址', trigger: ['blur', 'change'] }
         ],
@@ -1919,6 +1921,8 @@ export default {
     } else {
       this.getSender()
       this.handleInvoiceAdd()
+      this.ruleForm.preBillCode = newCode()
+      this.ruleForm.waybillCode = this.ruleForm.preBillCode
     }
   },
   mounted() {
@@ -1951,13 +1955,16 @@ export default {
         } else {
           document.title = '创建订单'
           this.isCreate = true
-          this.ruleForm.preBillCode = ''
+          this.ruleForm.preBillCode = newCode()
+          this.ruleForm.waybillCode = this.ruleForm.preBillCode
         }
         this.goodsTypeSelectChange(this.ruleForm.goodsType)
         this.oldCargovolumes = JSON.parse(JSON.stringify(this.ruleForm.cargovolumes))
-        this.$refs.extraServiceKindForm.getExtraServiceKinds(this.ruleForm.carrierRouteId)
-        this.$refs.extraServiceKindForm.setExtraServiceKinds(this.ruleForm.extraServiceKinds)
-        this.$refs.extraServices.setExtraServices(Array.isArray(this.ruleForm.extraServices) ? this.ruleForm.extraServices.map(x => (x.id)) : [])
+        this.$nextTick(() => {
+          this.$refs.extraServiceKindForm.getExtraServiceKinds(this.ruleForm.carrierRouteId)
+          this.$refs.extraServiceKindForm.setExtraServiceKinds(this.ruleForm.extraServiceKinds)
+          this.$refs.extraServices.setExtraServices(Array.isArray(this.ruleForm.extraServices) ? this.ruleForm.extraServices.map(x => (x.id)) : [])
+        })
       })
     },
     getSender() {
@@ -1966,24 +1973,17 @@ export default {
       })
     },
     onCreateOrder() {
-      this.ruleForm.preBillCode = new Date().getTime().toString()
+      this.ruleForm.preBillCode = newCode()
     },
     handleExceed(files, fileList) {
       this.$message.warning(`当前限制选择 5 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
     },
-    fileUploadHttpRequest(option) {
-      const formData = new FormData()
-      formData.append('file', option.file)
-      upload(formData).then(resp => {
-        if (this.ruleForm.files === undefined || this.ruleForm.files === null) {
-          this.ruleForm.files = []
-        }
-        this.ruleForm.files.push({ name: resp.data.name, accessId: resp.data.accessId, size: resp.data.size, accessURL: resp.data.accessURL })
-      })
+    handleUploadSuccess(response, file, fileList) {
+      console.info(response)
+      console.info(file)
+      console.info(fileList)
     },
-    /** 上传前 */
-    beforefileUpload(file) {
-      // 限制文件类型
+    onUploadChange(file, fileList) {
       const strIndex = file.name.lastIndexOf('.')
       const isDoc = file.name.substring(strIndex).toLowerCase() === '.doc'
       const isDocx = file.name.substring(strIndex).toLowerCase() === '.docx'
@@ -1995,19 +1995,46 @@ export default {
       const isGif = file.name.substring(strIndex).toLowerCase() === '.gif'
       if (!isDoc && !isDocx && !isXlsx && !isXls && !isPdf && !isPng && !isJpg && !isGif) {
         this.$message.warning(`只能上传.doc,.docx,.xlsx,.xls,.pdf,.png,.jpg,.gif文件`)
-        return false
+        this.$refs.uploadFile.handleRemove(file)
+        return
       }
       if ((file.size / 1024 / 1024) > 2) {
         this.$message.warning(`文件大小请勿超过 2 MB ，当前提交文件大小 ${(file.size / 1024 / 1024).toFixed(2)} MB`)
-        return false
+        this.$refs.uploadFile.handleRemove(file)
+        return
+      }
+      if (fileList) {
+        if (fileList.findIndex(f => f.name === file.name) !== fileList.findLastIndex(f => f.name === file.name)) {
+          this.$message.warning(file.name + `，文件已存在`)
+          this.$refs.uploadFile.handleRemove(file)
+          // fileList.pop()
+          return
+        }
       }
       if (this.ruleForm.files) {
         if (this.ruleForm.files.filter((item) => item.name === file.name).length > 0) {
           this.$message.warning(`请勿上传重复文件`)
-          return false
+          this.$refs.uploadFile.handleRemove(file)
+          return
         }
       }
-      return true
+    },
+    async fileUploadHttpRequest() {
+      var readyUploadFiles = this.$refs.uploadFile.uploadFiles
+      if (readyUploadFiles.length) {
+        for (let index = 0; index < readyUploadFiles.length; index++) {
+          const formData = new FormData()
+          formData.append('file', readyUploadFiles[index].raw)
+          formData.append('branchId', localStorage.getItem('Dy_BranchId'))
+          var resp = await upload(formData)
+          if (this.ruleForm.files === undefined || this.ruleForm.files === null) {
+            this.ruleForm.files = []
+          }
+          if (this.ruleForm.files.filter(x => x.name === resp.data.name).length === 0) {
+            this.ruleForm.files.push({ name: resp.data.name, accessId: resp.data.accessId, size: resp.data.size, accessURL: resp.data.accessURL })
+          }
+        }
+      }
     },
     handlePreviewFile(index, row) {
       const strIndex = row.name.lastIndexOf('.')
@@ -2381,15 +2408,12 @@ export default {
       this.centerChoiceDialogVisible = false
     },
     choseData(data) {
-      var countrys = getCountryListCache()
       if (this.choiceTitle === '选择收件人地址') {
         data.id = this.ruleForm.consignee.id
         this.ruleForm.consignee = data
-        this.ruleForm.consignee.countryCode = countrys.filter((item) => item.id === this.ruleForm.consignee.countryId)[0].code.toString()
       } else if (this.choiceTitle === '选择发件人地址') {
         data.id = this.ruleForm.sender.id
         this.ruleForm.sender = data
-        this.ruleForm.sender.countryCode = countrys.filter((item) => item.id === this.ruleForm.sender.countryId)[0].code.toString()
       } else if (this.choiceTitle === '选择申报信息') {
         if (this.ruleForm.invoices === undefined) {
           this.ruleForm.invoices = []
@@ -2399,8 +2423,8 @@ export default {
       }
       this.closeSenderAndConsigneeeDialogClick()
     },
-    save(formName) {
-      this.$refs[formName].validate((valid) => {
+    async save(formName) {
+      this.$refs[formName].validate(async (valid) => {
         if (!valid) {
           this.$message.error('请根据提示，填充并重新提交数据')
           return false
@@ -2411,6 +2435,10 @@ export default {
             this.$message.error('请根据提示，填充并重新提交数据')
           }
         })
+
+        // 先上传文件，等待。。。
+        await this.fileUploadHttpRequest()
+
         this.ruleForm.invoices.forEach((item) => {
           item.quantity = parseInt(item.quantity)
           item.unitcharge = parseFloat(item.unitcharge)
@@ -2460,6 +2488,7 @@ export default {
             }
           })
         }
+
         const loading = this.$loading({
           lock: true,
           text: 'Loading',

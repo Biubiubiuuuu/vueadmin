@@ -7,16 +7,20 @@ export function getCountrySelect() {
   })
 }
 
-export function getClientSelect() {
+export function getClientSelect(data) {
   return request({
-    url: '/Client/GetChildrenSelectAsync',
-    method: 'post'
+    url: '/Client/GetSelectAsync',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    }
   })
 }
 
 export function getCarrierRouteSelect() {
   return request({
-    url: '/CarrierRoute/GetClientCarrierRouteSelectAsync',
+    url: '/CarrierRoute/GetCurrentSelectAsync',
     method: 'post'
   })
 }

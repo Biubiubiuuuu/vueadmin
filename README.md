@@ -1,12 +1,4 @@
-Error mapping types.
-
-Mapping types:
-PreWayBillDetailModel -> PreWayBillDetailInfoDto
-Dy.Saas.DyServer.Models.PreWayBillDetailModel -> Dy.Saas.DyServer.Dtos.PreWayBillDetailInfoDto
-
-Type Map configuration:
-PreWayBillDetailModel -> PreWayBillDetailInfoDto
-Dy.Saas.DyServer.Models.PreWayBillDetailModel -> Dy.Saas.DyServer.Dtos.PreWayBillDetailInfoDto
-
-Destination Member:
-ExtraServices
+客户端口： 对接网址（IP 地址）：http://open.ylexp.com
+ID: 24487
+密钥：BoVkNOdsPoJq7Gn
+线路：

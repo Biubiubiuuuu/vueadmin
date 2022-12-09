@@ -5,6 +5,7 @@
       :key="item.code"
       :label="item.name +'('+item.code+')'"
       :value="item.code"
+      :disabled="item.disabled"
     />
   </el-select>
 </template>
@@ -44,7 +45,10 @@ export default {
       var list = getCarrierRouteCache()
       if (list === null || list === undefined) {
         getCarrierRouteSelect().then(resp => {
-          this.options = resp.data
+          var data = { disabled: true, code: '-', carrierId: 1, id: 0, name: '请选择承运路线' }
+          var datas = []
+          datas.push(data)
+          this.options = datas.concat(resp.data)
           setCarrierRouteCache(this.options)
         })
       } else {

@@ -197,23 +197,31 @@ export default {
         if (valid) {
           this.loginForm.branchId = localStorage.getItem('Dy_BranchId')
           this.loading = true
-          this.$store
-            .dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/' })
-              // 加载缓存数据
-              this.setCache()
-              // 记住密码功能
-              if (this.rempassChecked) {
-                Cookies.set('username', this.loginForm.userCode)
-                const passWord = Base64.encode(this.loginForm.userPwd)
-                Cookies.set('password', passWord)
-              } else {
-                Cookies.set('username', '')
-                Cookies.set('password', '')
-              }
-              this.loading = false
+          this.$store.dispatch('user/login', this.loginForm).then(() => {
+            // 加载缓存数据
+            const loadinga = this.$loading({
+              lock: true,
+              text: '加载缓存数据...',
+              spinner: 'el-inco-loading',
+              background: 'rgba(0,0,0,0.7)'
             })
+            this.setCache()
+
+            // 记住密码功能
+            if (this.rempassChecked) {
+              Cookies.set('username', this.loginForm.userCode)
+              const passWord = Base64.encode(this.loginForm.userPwd)
+              Cookies.set('password', passWord)
+            } else {
+              Cookies.set('username', '')
+              Cookies.set('password', '')
+            }
+            this.loading = false
+            setTimeout(() => {
+              this.$router.push({ path: this.redirect || '/' })
+            }, 2000)
+            loadinga.close()
+          })
             .catch(() => {
               this.loading = false
             })

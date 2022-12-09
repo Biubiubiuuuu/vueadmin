@@ -279,7 +279,7 @@ export default {
         isLiquid: false,
         isPowder: false
       }
-      this.$refs[formName].resetFields()
+      if (this.$refs.ruleForm !== undefined) this.$refs.ruleForm.resetFields()
     },
     oninput(val, limit = 0) {
       val = val.replace(/[^\d.]/g, '')

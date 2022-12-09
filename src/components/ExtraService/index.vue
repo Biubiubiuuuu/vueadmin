@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-checkbox-group v-model="form" @change="change">
-      <el-checkbox v-for="item in datas" :key="item.name" :label="item.id">{{ item.name }}</el-checkbox>
+      <el-checkbox v-for="item in datas" :key="item.name" :label="item.id" :disabled="disabled">{{ item.name }}</el-checkbox>
     </el-checkbox-group>
   </div>
 </template>
@@ -15,6 +15,10 @@ export default {
     setExtraService: {
       type: Function,
       default: null
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -33,7 +37,9 @@ export default {
       })
     },
     setExtraServices(v) {
-      this.form = Array.isArray(v) ? v : []
+      this.$nextTick(() => {
+        this.form = Array.isArray(v) ? v : []
+      })
     },
     change(v) {
       const data = []

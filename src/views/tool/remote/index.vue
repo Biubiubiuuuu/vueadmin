@@ -17,11 +17,11 @@
                       />
                     </el-select>
                   </el-form-item>
-                  <el-form-item label="国家/地区" prop="countryCode">
-                    <CountryCode
-                      v-model="ruleForm.countryCode"
+                  <el-form-item label="国家/地区" prop="countryId">
+                    <CountryId
+                      v-model="ruleForm.countryId"
                       style="width: 100%"
-                      @setValue="(val) => (ruleForm.countryCode = val)"
+                      @setValue="(val) => (ruleForm.countryId = val)"
                     />
                   </el-form-item>
                   <el-form-item label="邮编" prop="postalCode">
@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import CountryCode from '@/components/Select/CountryCode'
+import CountryId from '@/components/Select/CountryId'
 import Addressbook from '@/components/Select/Addressbook'
 import { SearchRemotebook } from '@/api/tool'
 
@@ -112,7 +112,7 @@ let that
 export default {
   name: 'Freighttrial',
   components: {
-    CountryCode,
+    CountryId,
     Addressbook
   },
   filters: {
@@ -136,6 +136,13 @@ export default {
     var validatePostalCode = (rule, value, callback) => {
       if (value === '' && this.ruleForm.city === '') {
         callback(new Error('城市或邮编至少输入一项！'))
+      } else {
+        callback()
+      }
+    }
+    var validateCountryId = (rule, value, callback) => {
+      if (value === 0 || value === '') {
+        callback(new Error('请选择国家/地区'))
       } else {
         callback()
       }
@@ -166,16 +173,12 @@ export default {
       }],
       ruleForm: {
         type: '0',
-        countryCode: '',
+        countryId: 0,
         city: '',
         postalCode: ''
       },
       rulesForm: {
-        countryId: [{
-          required: true,
-          message: '请选择国家/地区',
-          trigger: ['blur', 'change']
-        }],
+        countryId: [{ validator: validateCountryId, trigger: ['blur', 'change'] }],
         type: [{
           required: true,
           message: '请选择承运商',

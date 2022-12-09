@@ -219,13 +219,6 @@ export function getTreeByCusWebAsync() {
   })
 }
 
-export function getPrimaryClientCarrierRouteSelectAsync() {
-  return request({
-    url: '/CarrierRoute/GetPrimaryClientCarrierRouteSelectAsync',
-    method: 'post'
-  })
-}
-
 export function postCreateAsync(data) {
   return request({
     url: '/Client/PostCreateAsync',

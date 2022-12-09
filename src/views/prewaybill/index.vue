@@ -91,7 +91,6 @@
             >
               <Client
                 v-model="formQuery.clientId"
-                :multiple="true"
                 @setValue="(val) => (formQuery.clientId = val)"
               />
             </el-form-item>
@@ -102,20 +101,24 @@
           >
             <el-form-item
               label="是否已打印"
-              prop="isPrint"
+              prop="labelPrintStatus"
             >
               <el-select
-                v-model="formQuery.isPrint"
+                v-model="formQuery.labelPrintStatus"
                 placeholder="是否已打印"
                 clearable
               >
                 <el-option
+                  label="全部"
+                  :value="0"
+                />
+                <el-option
                   label="未打印"
-                  value="false"
+                  :value="2"
                 />
                 <el-option
                   label="已打印"
-                  value="true"
+                  :value="1"
                 />
               </el-select>
             </el-form-item>
@@ -515,6 +518,7 @@
               >
                 <template slot-scope="scope">
                   <div>创建方式：{{ scope.row.createMethod | filterCreateMethod }}</div>
+                  <div>创建人：{{ scope.row.clientId | filterClient }}</div>
                   <div>是否打印：{{ scope.row.isPrint ? '已打印':'未打印' }}</div>
                   <div>扣退件：{{ scope.row.backOrHold | filterBackOrHold }}</div>
                 </template>
@@ -653,6 +657,10 @@
         <el-descriptions-item>
           <template slot="label"> 备注 </template>
           {{ detailedData.remark }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label"> 额外服务 </template>
+          <ExtraService ref="extraServices" :disabled="true" />
         </el-descriptions-item>
       </el-descriptions>
       <el-descriptions
@@ -1216,6 +1224,18 @@
         </div>
       </el-backtop>
     </el-drawer>
+    <el-dialog
+      title="按勾选导出Excel"
+      :visible.sync="dialogVisibleExport"
+      width="70%"
+    >
+      <Export ref="export" />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleExport = false">取 消</el-button>
+        <el-button type="primary" @click="exportExcel">按勾选导出Excel</el-button>
+      </span>
+    </el-dialog>
+
     <el-backtop>
       <div
         width="100%"
@@ -1229,20 +1249,24 @@
 
 <script>
 import Pagination from '@/components/Pagination'
+import ExtraService from '@/components/ExtraService'
 import CarrierRouteId from '@/components/Select/CarrierRouteId'
 import UnitType from '@/components/Select/UnitType'
 import CountryId from '@/components/Select/CountryId'
 import Client from '@/components/Select/Client'
-import { getRecStateSumAsync, getList, submitReturnAsync, submitSeizureAsync, cancelSeizureOrReturnAsync, removesAsync, hardDeleteAsync, getDetail, convertToPreAsync, printLabelAsync, printInvoiceLabelAsync } from '@/api/prewaybill'
-import { getCountryListCache, getPackTypeCache, getGoodsTypeCache } from '@/api/cache'
+import Export from '@/components/Export'
+import { getRecStateSumAsync, getList, submitReturnAsync, submitSeizureAsync, cancelSeizureOrReturnAsync, exportExcelAsync, removesAsync, hardDeleteAsync, getDetail, convertToPreAsync, printLabelAsync, printInvoiceLabelAsync } from '@/api/prewaybill'
+import { getCountryListCache, getPackTypeCache, getGoodsTypeCache, getClientCache } from '@/api/cache'
 let that
 
 export default {
   name: 'Prewaybill',
   components: {
     Pagination,
+    Export,
     CarrierRouteId,
     UnitType,
+    ExtraService,
     CountryId,
     Client
   },
@@ -1268,6 +1292,10 @@ export default {
         case 3:
           return '平台'
       }
+    },
+    filterClient(val) {
+      const item = that.clientList.find((f) => f.id === val)
+      return item ? item.name : '--'
     },
     filterBackOrHold(val) {
       switch (val) {
@@ -1298,9 +1326,11 @@ export default {
       countryList: [],
       packList: getPackTypeCache(),
       goodsList: getGoodsTypeCache(),
+      clientList: getClientCache(),
       windowWidth: document.documentElement.clientWidth,
       drawerSize: '80%',
       centerEditDialogVisible: true,
+      dialogVisibleExport: false,
       selectIds: [],
       orderData: {},
       drawer: false,
@@ -1333,7 +1363,7 @@ export default {
         carrierRouteId: undefined,
         countryId: undefined,
         clientId: undefined,
-        isPrint: '',
+        labelPrintStatus: 0,
         consigneeName: '',
         creationTime: '',
         preWayBillStateType: 0,
@@ -1646,8 +1676,8 @@ export default {
                 type: 'success',
                 duration: 1500
               })
-              this.getList()
               window.open(resp.data, '_blank')
+              this.getList()
             })
             .finally(() => {
               loading.close()
@@ -1715,6 +1745,13 @@ export default {
         this.$message.warning('请选择需要操作的订单')
         return
       }
+      this.dialogVisibleExport = true
+    },
+    exportExcel() {
+      var data = { 'ids': this.selectIds, 'columns': this.$refs.export.getColumns() }
+      exportExcelAsync(data).then(resp => {
+        console.info(resp.data)
+      })
     },
     handleSelectionChange(val) {
 
@@ -1742,8 +1779,12 @@ export default {
         this.drawer = true
         this.drawerTitle = `${resp.data.preBillCode} 订单明细`
         this.detailedData = resp.data
+        this.$nextTick(() => {
+          this.$refs.extraServices.setExtraServices(Array.isArray(this.detailedData.extraServices) ? this.detailedData.extraServices.map(x => (x.id)) : [])
+        })
       })
     },
+
     handleDrawerClose() {
       this.drawer = false
     },

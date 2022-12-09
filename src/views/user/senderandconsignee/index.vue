@@ -203,6 +203,13 @@ export default {
         callback()
       }
     }
+    var validateCountryId = (rule, value, callback) => {
+      if (value === 0 || value === '') {
+        callback(new Error('请选择国家/地区'))
+      } else {
+        callback()
+      }
+    }
     return {
       SenderAndReceiver: 'Receiver',
       title: '添加收件人',
@@ -212,7 +219,7 @@ export default {
       ruleForm: {
         name: '',
         company: '',
-        countryId: '',
+        countryId: 0,
         province: '',
         city: '',
         address: '',
@@ -229,9 +236,7 @@ export default {
           { required: true, message: '请输入姓名', trigger: 'blur' },
           { min: 1, max: 200, message: '长度在 1 到 200 个字符', trigger: 'blur' }
         ],
-        countryId: [
-          { required: true, message: '请选择国家/地区', trigger: 'blur' }
-        ],
+        countryId: [{ validator: validateCountryId, trigger: ['blur', 'change'] }],
         province: [
           { required: true, message: '请输入州/省', trigger: 'blur' }
         ],
@@ -313,11 +318,11 @@ export default {
       this.resetForm(formName)
       this.centerDialogVisible = false
     },
-    resetForm(formName) {
+    resetForm() {
       this.ruleForm = {
         name: '',
         company: '',
-        countryId: '',
+        countryId: 0,
         province: '',
         city: '',
         address: '',
@@ -329,7 +334,7 @@ export default {
         taxID: '',
         isDefault: false
       }
-      this.$refs[formName].resetFields()
+      if (this.$refs.ruleForm !== undefined) this.$refs.ruleForm.resetFields()
     }
   }
 }

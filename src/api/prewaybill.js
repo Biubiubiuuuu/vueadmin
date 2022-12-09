@@ -147,3 +147,11 @@ export function getSharedTranParametersListAsync() {
     method: 'post'
   })
 }
+
+export function exportExcelAsync(data) {
+  return request({
+    url: '/Client/PreWayBill/ExportExcelAsync',
+    method: 'post',
+    data
+  })
+}

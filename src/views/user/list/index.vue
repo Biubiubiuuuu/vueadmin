@@ -156,17 +156,6 @@
             </el-form-item>
           </el-col>
           <el-col v-if="ruleForm.clientType!=1" :lg="24" :xs="24">
-            <el-form-item label="屏蔽承运路线" prop="shieldRoutes">
-              <el-transfer
-                v-model="ruleForm.shieldRoutes"
-                style="margin-top: 40px;"
-                :data="carrierroutes"
-                :titles="['可用', '已屏蔽']"
-                :button-texts="['取消', '屏蔽']"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col v-if="ruleForm.clientType!=1" :lg="24" :xs="24">
             <el-form-item label="菜单权限" prop="menuIds">
               <el-tree
                 ref="elMenuTree"
@@ -197,7 +186,7 @@
   </div>
 </template>
 <script>
-import { getListAsync, changeStatusAsync, getAsync, postRemoveAsync, getTreeByCusWebAsync, getPrimaryClientCarrierRouteSelectAsync, postModifyAsync, postCreateAsync } from '@/api/client'
+import { getListAsync, changeStatusAsync, getAsync, postRemoveAsync, getTreeByCusWebAsync, postModifyAsync, postCreateAsync } from '@/api/client'
 import Pagination from '@/components/Pagination'
 import { jsonToTree } from '@/utils/tree'
 
@@ -230,6 +219,7 @@ export default {
         name: ''
       },
       ruleForm: {
+        id: 0,
         pid: 0,
         name: '',
         clientCode: '',
@@ -245,7 +235,6 @@ export default {
           contactType: 3,
           userType: 3
         }],
-        shieldRoutes: [],
         menuIds: [],
         mobile: '',
         QQ: '',
@@ -295,13 +284,6 @@ export default {
         this.menus = jsonToTree(resp.data, 0, 0, null)
       })
     },
-    getClientCarrierRouteSelect() {
-      getPrimaryClientCarrierRouteSelectAsync().then(resp => {
-        this.carrierroutes = resp.data.map(x => {
-          return { key: x.id, label: x.name }
-        })
-      })
-    },
     changePape(currentPage, pageSize) {
       this.queryData.skipCount = (currentPage - 1) * pageSize
       this.queryData.maxResultCount = pageSize
@@ -326,7 +308,6 @@ export default {
     clientClick() {
       this.centerDialogVisible = true
       this.getTreeByCusWeb()
-      this.getClientCarrierRouteSelect()
       if (this.$refs.ruleForm !== undefined) {
         this.$refs.ruleForm.resetFields()
       }
@@ -346,28 +327,7 @@ export default {
         if (!valid) {
           return false
         }
-        var arr = []
         this.ruleForm.menuIds = this.$refs.elMenuTree.getCheckedKeys()
-        this.ruleForm.menuIds.forEach(x => {
-          this.menus.filter(a => a.children).forEach(y => {
-            y.children.forEach(b => {
-              if (b.id === x) {
-                if (arr.filter(c => c === y.id).length === 0) {
-                  arr.push(y.id)
-                }
-              }
-            })
-          })
-        })
-        this.ruleForm.menuIds = this.ruleForm.menuIds.concat(arr)
-        if (this.ruleForm.shieldRoutes) {
-          this.ruleForm.shieldRoutes = this.ruleForm.shieldRoutes.join(',')
-        }
-        var client = this.tableData.filter(x => x.clientType === 1)
-        if (client) {
-          this.ruleForm.pid = client[0].id
-          this.ruleForm.clientType = 2
-        }
         if (this.ruleForm.id > 0) {
           postModifyAsync(this.ruleForm).then(() => {
             this.$notify({ title: '成功', message: '操作成功', type: 'success', 'duration': 1500 })
@@ -385,7 +345,6 @@ export default {
     },
     handleDataEdit(id) {
       this.getTreeByCusWeb()
-      this.getClientCarrierRouteSelect()
       getAsync(id).then(resp => {
         this.title = '修改用户'
         this.centerDialogVisible = true
@@ -394,17 +353,6 @@ export default {
         }
 
         this.ruleForm = resp.data
-        if (this.ruleForm.clientType === 2) {
-          this.ruleForm.shieldRoutes = this.ruleForm.shieldRoutes ? this.ruleForm.shieldRoutes.split(',') : []
-          var shieldRoutes = []
-          this.ruleForm.shieldRoutes.forEach(item => {
-            var data = this.carrierroutes.filter(x => parseInt(x.key) === parseInt(item.id))
-            if (data) {
-              shieldRoutes.push(parseInt(item))
-            }
-          })
-          this.ruleForm.shieldRoutes = shieldRoutes
-        }
       })
     },
     handleContentDataAdd() {

@@ -13,11 +13,11 @@
             >
               <el-row type="flex" class="row-bg" justify="center">
                 <el-col :sm="12" :md="10" :lg="8" :xl="5" :xs="24">
-                  <el-form-item label="默认运输方式" prop="carrierRouteCode">
-                    <CarrierRouteCode
-                      v-model="ruleForm.carrierRouteCode"
+                  <el-form-item label="默认运输方式" prop="carrierRouteId">
+                    <CarrierRouteId
+                      v-model="ruleForm.carrierRouteId"
                       style="width: 100%"
-                      @setValue="(val) => (ruleForm.carrierRouteCode = val)"
+                      @setValue="(val) => (ruleForm.carrierRouteId = val)"
                     />
                   </el-form-item>
                   <el-form-item label="单号前缀" prop="numberPrefix">
@@ -65,7 +65,7 @@
                 style="line-height: 25px;font-size: 14px;"
               >
                 1.请正确选择运输方式<br>
-                2.目的国家/地区支持二字码、中、英文名称，系统会尽量识别，如碰到无法识别，请手工修改，请参考：基础数据：国家/地区列表<br>
+                2.目的国家/地区支持二字码，系统会尽量识别，如碰到无法识别，请手工修改，请参考：基础数据：国家/地区列表<br>
                 3.申报价值里填数字，不要包含USD,$等币种信息<br>
                 4.件数信息请填数字，不要包含件,pcs,piece等单位信息<br>
                 5.EUB必须填写正确的邮编，城市，州信息<br>
@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import CarrierRouteCode from '@/components/Select/CarrierRouteCode'
+import CarrierRouteId from '@/components/Select/CarrierRouteId'
 import CountryTable from '@/components/Table/Country'
 import CarrierRouteTable from '@/components/Table/CarrierRoute'
 import { batchImportAsync } from '@/api/prewaybill'
@@ -112,7 +112,7 @@ import { batchImportAsync } from '@/api/prewaybill'
 export default {
   name: 'ImportWaybill',
   components: {
-    CarrierRouteCode,
+    CarrierRouteId,
     CountryTable,
     CarrierRouteTable
   },
@@ -123,7 +123,7 @@ export default {
       filelist: [],
       tempSrc: process.env.VUE_APP_BASE_API.replace('/api', '') + '\\Images\\order_template_excel.png',
       ruleForm: {
-        carrierRouteCode: '',
+        carrierRouteId: 0,
         numberPrefix: '',
         files: undefined
       },
@@ -153,7 +153,7 @@ export default {
         const forms = new FormData()
         forms.append('files', this.ruleForm.files)
         forms.append('numberPrefix', this.ruleForm.numberPrefix)
-        forms.append('carrierRouteCode', this.ruleForm.carrierRouteCode)
+        forms.append('carrierRouteId', this.ruleForm.carrierRouteId)
         const loading = this.$loading({
           lock: true,
           text: '提交中，请勿刷新页面.....',

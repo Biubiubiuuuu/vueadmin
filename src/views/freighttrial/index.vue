@@ -7,11 +7,11 @@
             <el-form ref="ruleForm" :model="ruleForm" :rules="rulesForm" size="small" label-width="80px">
               <el-row type="flex" class="row-bg" justify="center">
                 <el-col :sm="12" :md="10" :lg="8" :xl="5" :xs="24">
-                  <el-form-item label="目的地" prop="countryCode">
-                    <CountryCode
-                      v-model="ruleForm.countryCode"
+                  <el-form-item label="目的地" prop="countryId">
+                    <CountryId
+                      v-model="ruleForm.countryId"
                       style="width: 100%"
-                      @setValue="(val) => (ruleForm.countryCode = val)"
+                      @setValue="(val) => (ruleForm.countryId = val)"
                     />
                   </el-form-item>
                   <el-form-item label="货物类型" prop="goodsType">
@@ -33,14 +33,7 @@
                     <el-input v-model="ruleForm.mHeight" placeholder="请输入高（CM）" clearable size="small" @keyup.native="ruleForm.mHeight = oninput(ruleForm.mHeight,2)" />
                   </el-form-item>
                   <el-form-item label="额外服务" prop="types">
-                    <el-select v-model="ruleForm.types" multiple placeholder="请选择额外服务（支持多选）" style="width: 100%;">
-                      <el-option
-                        v-for="item in options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
-                    </el-select>
+                    <ExtraService ref="extraServices" :set-extra-service="setExtraService" />
                   </el-form-item>
                   <div style="text-align: center;">
                     <el-button type="primary" size="medium" @click="freighttrial('ruleForm')">运费试算</el-button>
@@ -102,57 +95,34 @@
 </template>
 
 <script>
-import CountryCode from '@/components/Select/CountryCode'
+import CountryId from '@/components/Select/CountryId'
 import GoodsType from '@/components/Select/GoodsType'
 import Freight from '@/components/Table/Freight'
 import PackType from '@/components/Select/PackType'
+import ExtraService from '@/components/ExtraService'
 import { getCountryListCache, getPackTypeCache, getGoodsTypeCache } from '@/api/cache'
 
 export default {
   name: 'Freighttrial',
   components: {
-    CountryCode,
+    CountryId,
     GoodsType,
+    ExtraService,
     PackType,
     Freight
   },
   data() {
+    var validateCountryId = (rule, value, callback) => {
+      if (value === 0 || value === '') {
+        callback(new Error('请选择国家/地区'))
+      } else {
+        callback()
+      }
+    }
     return {
       freighttrialTabs: 'freighttrialTab',
       isShowTags: false,
       countryName: '',
-      options: [{
-        label: '测试1',
-        value: '测试1'
-      },
-      {
-        label: '测试2',
-        value: '测试2'
-      },
-      {
-        label: '测试2',
-        value: '测试2'
-      },
-      {
-        label: '测试2',
-        value: '测试2'
-      },
-      {
-        label: '测试2',
-        value: '测试2'
-      },
-      {
-        label: '测试2',
-        value: '测试2'
-      },
-      {
-        label: '测试2',
-        value: '测试2'
-      },
-      {
-        label: '测试2',
-        value: '测试2'
-      }],
       dataForm: {
         countryName: '',
         weight: '',
@@ -164,21 +134,17 @@ export default {
         types: []
       },
       ruleForm: {
-        countryCode: '',
+        countryId: 0,
         weight: '',
         pack: 1,
         goodsType: 1,
         mLong: '',
         mWidth: '',
         mHeight: '',
-        types: []
+        extraServices: []
       },
       rulesForm: {
-        countryCode: {
-          required: true,
-          message: '请选择目的地',
-          trigger: ['blur', 'change']
-        },
+        countryId: [{ validator: validateCountryId, trigger: ['blur', 'change'] }],
         pack: {
           required: true,
           message: '请选择包装方式',
@@ -205,7 +171,7 @@ export default {
           return false
         }
         this.dataForm = JSON.parse(JSON.stringify(this.ruleForm))
-        this.dataForm.countryName = getCountryListCache().find(item => item.id === this.ruleForm.countryCode).cnName
+        this.dataForm.countryName = getCountryListCache().find(item => item.id === this.ruleForm.countryId).cnName
         this.dataForm.goodsTypeDes = getGoodsTypeCache().find(item => item.id === this.ruleForm.goodsType).name
         this.dataForm.packDes = getPackTypeCache().find(item => item.id === this.ruleForm.pack).name
         if (this.ruleForm.types) {
@@ -233,6 +199,9 @@ export default {
         val = val.replace(reg, '$1.$2')
       }
       return val
+    },
+    setExtraService(v) {
+      this.ruleForm.extraServices = Array.isArray(v) ? v : JSON.parse(v)
     }
   }
 }

@@ -13,3 +13,21 @@ export const delEmptyQueryNodes = (obj = {}) => {
   return obj
 }
 
+export function newCode() {
+  var data = new Date()
+  var month = (data.getMonth() + 1).toString()
+  var day = data.getDate().toString()
+  return month + (day.length < 2 ? '0' + day : day) + uniqueNumber().toString().substring(7)
+}
+
+uniqueNumber.previous = 0
+
+function uniqueNumber() {
+  var date = Date.now()
+  if (date <= uniqueNumber.previous) {
+    date = ++uniqueNumber.previous
+  } else {
+    uniqueNumber.previous = date
+  }
+  return date
+}
