@@ -77,7 +77,7 @@ export default {
           SearchAddressbookDHL(this.queryData).then(resp => {
             if (resp.data) {
               this.addressbook = resp.data
-              cb(this.addressbook.map(x => ({ ...x, value: x.postalCode === '' ? x.city : x.province + '-' + x.city + '-' + x.postalCode })))
+              cb(this.addressbook.map(x => ({ ...x, value: (x.postalCode === '' || x.postalCode === null) ? x.city : x.province + '-' + x.city + '-' + x.postalCode })))
             } else {
               this.setAddressbook(this.queryData)
               cb(this.addressbook.map(x => ({ ...x, value: queryString })))
@@ -92,7 +92,7 @@ export default {
           searchAddressbook(this.queryData).then(resp => {
             if (resp.data) {
               this.addressbook = resp.data
-              cb(this.addressbook.map(x => ({ ...x, value: x.postalCode === '' ? x.city : x.province + '-' + x.city + '-' + x.postalCode })))
+              cb(this.addressbook.map(x => ({ ...x, value: (x.postalCode === '' || x.postalCode === null) ? x.city : x.province + '-' + x.city + '-' + x.postalCode })))
             } else {
               this.setAddressbook(this.queryData)
               cb(this.addressbook.map(x => ({ ...x, value: queryString })))

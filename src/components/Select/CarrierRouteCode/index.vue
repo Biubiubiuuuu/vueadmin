@@ -44,13 +44,8 @@ export default {
     getCarrierRouteSelect() {
       var list = getCarrierRouteCache()
       if (list === null || list === undefined) {
-        getCarrierRouteSelect().then(resp => {
-          var data = { disabled: true, code: '-', carrierId: 1, id: 0, name: '请选择承运路线' }
-          var datas = []
-          datas.push(data)
-          this.options = datas.concat(resp.data)
-          setCarrierRouteCache(this.options)
-        })
+        this.options = getCarrierRouteSelect()
+        setCarrierRouteCache(this.options)
       } else {
         this.options = list
       }

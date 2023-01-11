@@ -30,10 +30,10 @@ export default {
     }
   },
   created() {
+    this.loadPlugins()
     if (this.windowWidth < 400) {
       this.fullscreenChoice = true
     }
-    this.loadPlugins()
   },
   mounted() {
     var that = this
@@ -62,7 +62,7 @@ export default {
         .then(() => {
           this.loadExcel()
         })
-        .catch((res) => {})
+        .catch(() => {})
     },
     loadExcel() {
       LuckyExcel.transformExcelToLuckyByUrl(this.url, this.name, (exportJson, luckysheetfile) => {

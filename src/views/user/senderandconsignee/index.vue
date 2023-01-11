@@ -284,13 +284,13 @@ export default {
       var than = this
       than.centerDialogVisible = true
       than.title = '添加收件人'
-      than.resetForm('ruleForm')
+      than.resetForm()
     },
     senderClick() {
       var than = this
       than.centerDialogVisible = true
       than.title = '添加发件人'
-      than.resetForm('ruleForm')
+      than.resetForm()
     },
     addClick(formName, bool) {
       this.$refs[formName].validate((valid) => {
@@ -302,20 +302,20 @@ export default {
             this.$notify({ title: '成功', message: '添加收件人成功', type: 'success', 'duration': 1500 })
             this.$refs.consignee.getCommonConsigneeListAsync(undefined)
             this.centerDialogVisible = bool
-            this.resetForm(formName)
+            this.resetForm()
           })
         } else if (this.title === '添加发件人') {
           setCommonSenderAsync(this.ruleForm).then(() => {
             this.$notify({ title: '成功', message: '添加发件人成功', type: 'success', 'duration': 1500 })
             this.$refs.sender.getCommonSenderListAsync(undefined)
             this.centerDialogVisible = bool
-            this.resetForm(formName)
+            this.resetForm()
           })
         }
       })
     },
-    closeDialogClick(formName) {
-      this.resetForm(formName)
+    closeDialogClick() {
+      this.resetForm()
       this.centerDialogVisible = false
     },
     resetForm() {

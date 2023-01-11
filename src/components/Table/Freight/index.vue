@@ -1,5 +1,6 @@
 <template>
   <div>
+    <el-progress :text-inside="true" :stroke-width="24" :percentage="100" status="success" style="margin-bottom:10px;" />
     <el-table
       ref="table"
       size="medium"
@@ -52,12 +53,8 @@
 <script>
 
 export default {
-  name: 'SenderTable',
+  name: 'FreightTable',
   props: {
-    isShowOperation: {
-      type: Boolean,
-      default: true
-    },
     postData: {
       type: String,
       default: ''
@@ -65,31 +62,16 @@ export default {
   },
   data() {
     return {
-      tableData: [],
-      fullscreen: false,
-      windowWidth: document.documentElement.clientWidth
+      tableData: []
     }
   },
   created() {
-    this.getCommonInvoiceListAsync(this.queryData)
-    if (this.windowWidth < 400) {
-      this.fullscreen = true
-    }
-  },
-  mounted() {
-    var that = this
-    window.onresize = () => {
-      return (() => {
-        window.fullWidth = document.documentElement.clientWidth
-        that.windowWidth = window.fullWidth // 宽
-        that.fullscreen = false
-        if (that.windowWidth < 400) {
-          that.fullscreen = true
-        }
-      })()
-    }
+
   },
   methods: {
+    setData(v) {
+      this.tableData = v
+    },
     getData() {
       var than = this
       for (let i = 0; i < 110; i++) {

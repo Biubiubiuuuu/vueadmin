@@ -10,8 +10,7 @@
 </template>
 
 <script>
-import { getGoodsTypeCache, setGoodsTypeCache } from '@/api/cache'
-import { getGoodsTypeSelect } from '@/api/select'
+import { getGoodsTypeCache } from '@/api/cache'
 
 export default {
   name: 'GoodsTypeSelect',
@@ -41,15 +40,7 @@ export default {
   },
   methods: {
     getGoodsTypeSelect() {
-      var list = getGoodsTypeCache()
-      if (list === null || list === undefined) {
-        getGoodsTypeSelect().then(resp => {
-          this.options = resp.data
-          setGoodsTypeCache(this.options)
-        })
-      } else {
-        this.options = list
-      }
+      this.options = getGoodsTypeCache()
     },
     selectChange(val) {
       this.$emit('goodsTypeSelectChange', val)

@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3241706 */
-  src: url('iconfont.woff2?t=1665741125775') format('woff2'),
-       url('iconfont.woff?t=1665741125775') format('woff'),
-       url('iconfont.ttf?t=1665741125775') format('truetype');
+  src: url('iconfont.woff2?t=1670921701854') format('woff2'),
+       url('iconfont.woff?t=1670921701854') format('woff'),
+       url('iconfont.ttf?t=1670921701854') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,30 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.el-icon-dy-query1:before {
+  content: "\e6f0";
+}
+
+.el-icon-dy-zuofei:before {
+  content: "\e6e6";
+}
+
+.el-icon-dy-navicon-fwdzpz:before {
+  content: "\e63d";
+}
+
+.el-icon-dy-cangku_daozhan:before {
+  content: "\eaca";
+}
+
+.el-icon-dy-shangpin:before {
+  content: "\e68a";
+}
+
+.el-icon-dy-kuaijiezhifu:before {
+  content: "\e608";
 }
 
 .el-icon-dy-zhongyingwenqiehuan-yingwen:before {
@@ -77,10 +101,6 @@
   content: "\e630";
 }
 
-.el-icon-dy-dizhibu:before {
-  content: "\e650";
-}
-
 .el-icon-dy-Invoice:before {
   content: "\e668";
 }
@@ -109,7 +129,7 @@
   content: "\e68e";
 }
 
-.el-icon-dy-776bianjiqi_congcaogaoxiangjiazai:before {
+.el-icon-dy-bianjiqi_congcaogaoxiangjiazai:before {
   content: "\e659";
 }
 
@@ -139,10 +159,6 @@
 
 .el-icon-dy-icon_xiugaimima:before {
   content: "\e648";
-}
-
-.el-icon-dy-dizhiguanli:before {
-  content: "\e624";
 }
 
 .el-icon-dy-caiwu:before {

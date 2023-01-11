@@ -6,6 +6,48 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1038621",
+      "name": "高级查询",
+      "font_class": "query1",
+      "unicode": "e6f0",
+      "unicode_decimal": 59120
+    },
+    {
+      "icon_id": "9874562",
+      "name": "KHCFDC_作废",
+      "font_class": "zuofei",
+      "unicode": "e6e6",
+      "unicode_decimal": 59110
+    },
+    {
+      "icon_id": "3702587",
+      "name": "服务地址配置",
+      "font_class": "navicon-fwdzpz",
+      "unicode": "e63d",
+      "unicode_decimal": 58941
+    },
+    {
+      "icon_id": "5387407",
+      "name": "仓库_到站",
+      "font_class": "cangku_daozhan",
+      "unicode": "eaca",
+      "unicode_decimal": 60106
+    },
+    {
+      "icon_id": "16854719",
+      "name": "仓库转运",
+      "font_class": "shangpin",
+      "unicode": "e68a",
+      "unicode_decimal": 59018
+    },
+    {
+      "icon_id": "33035573",
+      "name": "快捷支付",
+      "font_class": "kuaijiezhifu",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
       "icon_id": "31310820",
       "name": "中英文切换-英文",
       "font_class": "zhongyingwenqiehuan-yingwen",
@@ -118,13 +160,6 @@
       "unicode_decimal": 58928
     },
     {
-      "icon_id": "16372252",
-      "name": "地址簿",
-      "font_class": "dizhibu",
-      "unicode": "e650",
-      "unicode_decimal": 58960
-    },
-    {
       "icon_id": "27954492",
       "name": "Invoice",
       "font_class": "Invoice",
@@ -176,7 +211,7 @@
     {
       "icon_id": "1308562",
       "name": "776编辑器_从草稿箱加载",
-      "font_class": "776bianjiqi_congcaogaoxiangjiazai",
+      "font_class": "bianjiqi_congcaogaoxiangjiazai",
       "unicode": "e659",
       "unicode_decimal": 58969
     },
@@ -228,13 +263,6 @@
       "font_class": "icon_xiugaimima",
       "unicode": "e648",
       "unicode_decimal": 58952
-    },
-    {
-      "icon_id": "4965139",
-      "name": "地址管理",
-      "font_class": "dizhiguanli",
-      "unicode": "e624",
-      "unicode_decimal": 58916
     },
     {
       "icon_id": "5269225",

@@ -5,13 +5,13 @@
       :key="item.id"
       :label="item.name +'('+item.clientCode+')'"
       :value="item.id"
+      :disabled="item.disabled"
     />
   </el-select>
 </template>
 
 <script>
-import { getClientCache, setClientCache } from '@/api/cache'
-import { getClientSelect } from '@/api/select'
+import { getClientCache } from '@/api/cache'
 
 export default {
   name: 'ClientSelect',
@@ -45,15 +45,7 @@ export default {
   },
   methods: {
     getClientSelect() {
-      var list = getClientCache()
-      if (list === null || list === undefined) {
-        getClientSelect().then(resp => {
-          this.options = resp.data
-          setClientCache(this.options)
-        })
-      } else {
-        this.options = list
-      }
+      this.options = getClientCache()
     }
   }
 }

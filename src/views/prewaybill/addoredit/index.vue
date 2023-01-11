@@ -729,11 +729,12 @@
                   class="upload-demo"
                   action="#"
                   multiple
+                  :show-file-list="isCreate"
                   :on-change="onUploadChange"
-                  :auto-upload="false"
+                  :auto-upload="!isCreate"
                   :limit="5"
                   :on-exceed="handleExceed"
-                  :on-success="handleUploadSuccess"
+                  :http-request="fileHttpRequest"
                 >
                   <el-button
                     slot="trigger"
@@ -742,6 +743,7 @@
                   >选取文件</el-button>
                   <div slot="tip" class="el-upload__tip">*最多可上传 5 个文件，单个文件大小不超过 2 MB</div>
                   <div slot="tip" class="el-upload__tip">*只能上传.doc,.docx,.xlsx,.xls,.pdf,.png,.jpg,.gif文件</div>
+                  <div slot="tip" class="el-upload__tip">*修改订单时，上传/删除文件不需要点击保存</div>
                 </el-upload>
                 <div class="el-upload__tip">*以下是已上传的文件列表</div>
                 <el-table
@@ -1657,9 +1659,9 @@ import Excel from '@/components/FilePreview/Excel'
 import Pdf from '@/components/FilePreview/Pdf'
 import Word from '@/components/FilePreview/Word'
 import Other from '@/components/FilePreview/Other'
-import { insert, getDetail, edit } from '@/api/prewaybill'
+import { insert, getDetail, edit, addPreWaybillFileAsync, deletePreWaybillFileAsync } from '@/api/prewaybill'
 import { getCommonSenderDefaultAsync } from '@/api/client'
-import { upload, deleteFile } from '@/api/file'
+import { upload } from '@/api/file'
 import { searchAddressbook } from '@/api/tool'
 import { newCode } from '@/utils/tool'
 
@@ -1916,8 +1918,9 @@ export default {
       this.fullscreenChoice = true
     }
     var id = this.$route.query.id
+    var isEdit = this.$route.query.isEdit
     if (id !== undefined && id > 0) {
-      this.getOrder(id)
+      this.getOrder(id, isEdit)
     } else {
       this.getSender()
       this.handleInvoiceAdd()
@@ -1940,7 +1943,7 @@ export default {
     }
   },
   methods: {
-    getOrder(id) {
+    getOrder(id, isEdit) {
       getDetail(id).then((resp) => {
         this.ruleForm = resp.data
         if (this.ruleForm.consignee.certificateType === 0) {
@@ -1949,7 +1952,7 @@ export default {
         if (this.ruleForm.consignee.certificatePeriod) {
           this.ruleForm.consignee.certificatePeriod = this.ruleForm.consignee.certificatePeriod.split('~')
         }
-        if (this.$route.query.isEdit === 'true' || this.$route.query.isEdit) {
+        if (isEdit) {
           document.title = '编辑订单'
           this.isCreate = false
         } else {
@@ -1957,7 +1960,10 @@ export default {
           this.isCreate = true
           this.ruleForm.preBillCode = newCode()
           this.ruleForm.waybillCode = this.ruleForm.preBillCode
+          // 附件不复制
+          this.ruleForm.files = []
         }
+
         this.goodsTypeSelectChange(this.ruleForm.goodsType)
         this.oldCargovolumes = JSON.parse(JSON.stringify(this.ruleForm.cargovolumes))
         this.$nextTick(() => {
@@ -1978,10 +1984,22 @@ export default {
     handleExceed(files, fileList) {
       this.$message.warning(`当前限制选择 5 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
     },
-    handleUploadSuccess(response, file, fileList) {
-      console.info(response)
-      console.info(file)
-      console.info(fileList)
+    fileHttpRequest(option) {
+      const formData = new FormData()
+      formData.append('file', option.file)
+      formData.append('branchId', localStorage.getItem('Dy_BranchId'))
+      upload(formData).then(resp => {
+        if (this.ruleForm.files === undefined || this.ruleForm.files === null) {
+          this.ruleForm.files = []
+        }
+        this.ruleForm.files.push({ name: resp.data.name, accessId: resp.data.accessId, size: resp.data.size, accessURL: resp.data.accessURL })
+        this.addPreWaybillFile({ preWaybillId: this.ruleForm.id, name: resp.data.name, accessId: resp.data.accessId, size: resp.data.size, accessURL: resp.data.accessURL })
+      })
+    },
+    addPreWaybillFile(data) {
+      addPreWaybillFileAsync(data).then(resp => {
+        this.$notify({ title: '成功', message: '附件上传成功', type: 'success', 'duration': 1500 })
+      })
     },
     onUploadChange(file, fileList) {
       const strIndex = file.name.lastIndexOf('.')
@@ -2022,15 +2040,16 @@ export default {
     async fileUploadHttpRequest() {
       var readyUploadFiles = this.$refs.uploadFile.uploadFiles
       if (readyUploadFiles.length) {
+        if (this.ruleForm.files === undefined || this.ruleForm.files === null) {
+          this.ruleForm.files = []
+        }
         for (let index = 0; index < readyUploadFiles.length; index++) {
-          const formData = new FormData()
-          formData.append('file', readyUploadFiles[index].raw)
-          formData.append('branchId', localStorage.getItem('Dy_BranchId'))
-          var resp = await upload(formData)
-          if (this.ruleForm.files === undefined || this.ruleForm.files === null) {
-            this.ruleForm.files = []
-          }
-          if (this.ruleForm.files.filter(x => x.name === resp.data.name).length === 0) {
+          var dileData = readyUploadFiles[index]
+          if (this.ruleForm.files.filter(x => x.name === dileData.name).length === 0) {
+            const formData = new FormData()
+            formData.append('file', dileData.raw)
+            formData.append('branchId', localStorage.getItem('Dy_BranchId'))
+            var resp = await upload(formData)
             this.ruleForm.files.push({ name: resp.data.name, accessId: resp.data.accessId, size: resp.data.size, accessURL: resp.data.accessURL })
           }
         }
@@ -2077,7 +2096,7 @@ export default {
     handleFileDelete(index, row) {
       if (this.fileList.length === 0) {
         return this.$confirm(
-          `确定移除 <strong>${row.name}</strong> ？`,
+          `确定删除 <strong>${row.name}</strong> ？`,
           '提示',
           {
             confirmButtonText: '确定',
@@ -2086,12 +2105,14 @@ export default {
             type: 'warning'
           }
         ).then(() => {
-          deleteFile(row.accessId).then(resp => {
+          deletePreWaybillFileAsync(row.accessId).then(resp => {
             this.ruleForm.files.splice(index, 1)
-            this.$message({
-              type: 'success',
-              message: `附件 ${row.name} 删除成功!`
-            })
+            this.$notify({ title: '成功', message: `附件 ${row.name} 删除成功!`, type: 'success', 'duration': 1500 })
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
           })
         })
       }
@@ -2436,8 +2457,10 @@ export default {
           }
         })
 
-        // 先上传文件，等待。。。
-        await this.fileUploadHttpRequest()
+        if (this.isCreate) {
+          // 先上传文件，等待。。。
+          await this.fileUploadHttpRequest()
+        }
 
         this.ruleForm.invoices.forEach((item) => {
           item.quantity = parseInt(item.quantity)

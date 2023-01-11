@@ -143,7 +143,7 @@ export function getExtraServiceKindAsync(data) {
 
 export function getSharedTranParametersListAsync() {
   return request({
-    url: '/SharedTran/GetSharedTranParametersListAsync',
+    url: '/CategoryAndService/GetCategoryAndServiceListAsync',
     method: 'post'
   })
 }
@@ -155,3 +155,34 @@ export function exportExcelAsync(data) {
     data
   })
 }
+
+export function addPreWaybillFileAsync(data) {
+  return request({
+    url: '/Client/PreWayBill/AddPreWaybillFileAsync',
+    method: 'post',
+    data
+  })
+}
+
+export function deletePreWaybillFileAsync(data) {
+  return request({
+    url: '/Client/PreWayBill/DeletePreWaybillFileAsync',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
+
+export function getPreWaybillLogListAsync(data) {
+  return request({
+    url: '/Client/PreWayBill/GetPreWaybillLogListAsync',
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
+

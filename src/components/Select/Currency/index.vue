@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { getCurrencySelect } from '@/api/select'
+import { getCurrencyCache } from '@/api/cache'
 
 export default {
   name: 'CurrencySelect',
@@ -40,9 +40,7 @@ export default {
   },
   methods: {
     getCurrencySelect() {
-      getCurrencySelect().then(resp => {
-        this.options = resp.data
-      })
+      this.options = getCurrencyCache()
     }
   }
 }

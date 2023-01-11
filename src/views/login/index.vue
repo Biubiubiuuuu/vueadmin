@@ -197,7 +197,7 @@ export default {
         if (valid) {
           this.loginForm.branchId = localStorage.getItem('Dy_BranchId')
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
+          this.$store.dispatch('user/login', this.loginForm).then(async () => {
             // 加载缓存数据
             const loadinga = this.$loading({
               lock: true,
@@ -205,7 +205,8 @@ export default {
               spinner: 'el-inco-loading',
               background: 'rgba(0,0,0,0.7)'
             })
-            this.setCache()
+
+            await this.setCache()
 
             // 记住密码功能
             if (this.rempassChecked) {
@@ -217,16 +218,13 @@ export default {
               Cookies.set('password', '')
             }
             this.loading = false
-            setTimeout(() => {
-              this.$router.push({ path: this.redirect || '/' })
-            }, 2000)
             loadinga.close()
+            this.$router.push({ path: this.redirect || '/' })
           })
             .catch(() => {
               this.loading = false
             })
         } else {
-          console.log('error submit!!')
           return false
         }
       })
@@ -234,29 +232,35 @@ export default {
     handleTabsClick(tab, event) {
 
     },
-    setCache() {
-      getCarrierRouteSelect().then((resp) => {
-        setCarrierRouteCache(resp.data)
+    async setCache() {
+      await getCarrierRouteSelect().then((resp) => {
+        var datas = []
+        var detail = { disabled: true, code: 'Please select', carrierId: 0, name: '请选择', id: 0 }
+        datas.push(detail)
+        setCarrierRouteCache(datas.concat(resp.data))
       })
-      getClientSelect().then((resp) => {
-        setClientCache(resp.data)
+      await getClientSelect().then((resp) => {
+        var datas = []
+        var detail = { disabled: true, clientCode: 'Please select', clientType: 0, id: 0, name: '请选择', pid: 0, saleId: 0, status: 0 }
+        datas.push(detail)
+        setClientCache(datas.concat(resp.data))
       })
-      getCarrierRouteSelect().then((resp) => {
-        setCarrierRouteCache(resp.data)
+      await getCountrySelect().then((resp) => {
+        var datas = []
+        var detail = { disabled: true, pid: 0, code: '-', code2: '-', enName: 'Please select a country/region', cnName: '请选择国家/地区', cnLikeName: '', dhlRemote: 1, fedexRemote: 1, upsRemote: 1, tntRemote: 1, postlen: 1, spellCode: '1', id: 0 }
+        datas.push(detail)
+        setCountryListCache(datas.concat(resp.data))
       })
-      getCountrySelect().then((resp) => {
-        setCountryListCache(resp.data)
-      })
-      getGoodsTypeSelect().then((resp) => {
+      await getGoodsTypeSelect().then((resp) => {
         setGoodsTypeCache(resp.data)
       })
-      getPackTypeSelect().then((resp) => {
+      await getPackTypeSelect().then((resp) => {
         setPackTypeCache(resp.data)
       })
-      getUnitTypeSelect().then((resp) => {
+      await getUnitTypeSelect().then((resp) => {
         setUnitTypeCache(resp.data)
       })
-      getCurrencySelect().then((resp) => {
+      await getCurrencySelect().then((resp) => {
         setCurrencyCache(resp.data)
       })
     }

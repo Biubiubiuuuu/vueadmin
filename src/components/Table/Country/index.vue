@@ -62,10 +62,8 @@ export default {
       this.loading = true
       var list = getCountryListCache()
       if (list === null || list === undefined) {
-        getCountrySelect().then(resp => {
-          this.tableData = resp.data
-          setCountryListCache(this.tableData)
-        })
+        this.tableData = getCountrySelect()
+        setCountryListCache(this.tableData)
       } else {
         this.tableData = list
       }

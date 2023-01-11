@@ -10,8 +10,7 @@
 </template>
 
 <script>
-import { getUnitTypeCache, setUnitTypeCache } from '@/api/cache'
-import { getUnitTypeSelect } from '@/api/select'
+import { getUnitTypeCache } from '@/api/cache'
 
 export default {
   name: 'UnitTypeSelect',
@@ -49,15 +48,7 @@ export default {
   },
   methods: {
     getUnitTypeSelect() {
-      var list = getUnitTypeCache()
-      if (list === null || list === undefined) {
-        getUnitTypeSelect().then(resp => {
-          this.options = resp.data
-          setUnitTypeCache(this.options)
-        })
-      } else {
-        this.options = list
-      }
+      this.options = getUnitTypeCache()
     }
   }
 }

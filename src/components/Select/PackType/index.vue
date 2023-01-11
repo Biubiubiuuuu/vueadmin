@@ -10,8 +10,7 @@
 </template>
 
 <script>
-import { getPackTypeCache, setPackTypeCache } from '@/api/cache'
-import { getPackTypeSelect } from '@/api/select'
+import { getPackTypeCache } from '@/api/cache'
 
 export default {
   name: 'PackTypeSelect',
@@ -41,15 +40,7 @@ export default {
   },
   methods: {
     getPackTypeSelect() {
-      var list = getPackTypeCache()
-      if (list === null || list === undefined) {
-        getPackTypeSelect().then(resp => {
-          this.options = resp.data
-          setPackTypeCache(this.options)
-        })
-      } else {
-        this.options = list
-      }
+      this.options = getPackTypeCache()
     }
   }
 }

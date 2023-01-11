@@ -6,7 +6,7 @@
           <el-tab-pane label="修改密码" name="changePassTab">
             <el-form ref="ruleForm" :model="ruleForm" :rules="rulesForm" size="small" label-width="auto">
               <el-row class="row-bg" type="flex" justify="center">
-                <el-col :sm="12" :md="10" :lg="8" :xl="5" :xs="24">
+                <el-col :sm="15" :md="13" :lg="11" :xl="7" :xs="24">
                   <el-form-item label="旧密码" prop="oldPass">
                     <el-input v-model="ruleForm.oldPass" placeholder="请输入旧密码" clearable size="small" show-password />
                   </el-form-item>

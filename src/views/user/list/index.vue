@@ -101,7 +101,7 @@
               <el-input v-model="ruleForm.clientPwd" placeholder="请输入密码（默认：123456）" clearable size="small" show-password />
             </el-form-item>
           </el-col>
-          <el-col :lg="24" :xs="24">
+          <el-col :lg="24" :xs="24" style="margin-top: 10px;">
             <el-table
               :data="ruleForm.contactInfo"
               size="small"
@@ -161,6 +161,9 @@
                 ref="elMenuTree"
                 style="margin-top: 35px;"
                 :data="menus"
+                :default-expand-all="true"
+                :check-on-click-node="true"
+                :check-strictly="true"
                 show-checkbox
                 :default-checked-keys="ruleForm.menuIds"
                 node-key="id"
@@ -225,14 +228,9 @@ export default {
         clientCode: '',
         clientPwd: '123456',
         contactInfo: [{
-          key: 'QQ',
-          value: '123456',
+          key: '',
+          value: '',
           contactType: 1,
-          userType: 3
-        }, {
-          key: '私人手机',
-          value: '13800138000',
-          contactType: 3,
           userType: 3
         }],
         menuIds: [],
@@ -300,17 +298,14 @@ export default {
     },
     closeDialogClick() {
       this.centerDialogVisible = false
-      this.$refs.ruleForm.resetFields()
+      this.resetForm()
     },
     onQuery() {
       this.getList()
     },
     clientClick() {
-      this.centerDialogVisible = true
       this.getTreeByCusWeb()
-      if (this.$refs.ruleForm !== undefined) {
-        this.$refs.ruleForm.resetFields()
-      }
+      this.centerDialogVisible = true
     },
     statusChange(val) {
       var data = {
@@ -344,14 +339,11 @@ export default {
       })
     },
     handleDataEdit(id) {
+      this.resetForm()
       this.getTreeByCusWeb()
       getAsync(id).then(resp => {
         this.title = '修改用户'
         this.centerDialogVisible = true
-        if (this.$refs.ruleForm !== undefined) {
-          this.$refs.ruleForm.resetFields()
-        }
-
         this.ruleForm = resp.data
       })
     },
@@ -359,7 +351,8 @@ export default {
       this.ruleForm.contactInfo.push({
         key: '',
         value: '',
-        contactType: 1
+        contactType: 1,
+        userType: 3
       })
     },
     handleContentDataDelete(data) {
@@ -377,6 +370,27 @@ export default {
         this.$notify({ title: '成功', message: '操作成功', type: 'success', 'duration': 1500 })
         this.getList()
       })
+    },
+    resetForm() {
+      this.ruleForm = {
+        id: 0,
+        pid: 0,
+        name: '',
+        clientCode: '',
+        clientPwd: '123456',
+        contactInfo: [{
+          key: '',
+          value: '',
+          contactType: 1,
+          userType: 3
+        }],
+        menuIds: [],
+        mobile: '',
+        QQ: '',
+        remark: '',
+        status: ''
+      }
+      if (this.$refs.ruleForm !== undefined) this.$refs.ruleForm.resetFields()
     }
   }
 }

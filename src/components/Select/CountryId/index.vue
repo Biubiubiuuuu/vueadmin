@@ -11,8 +11,7 @@
 </template>
 
 <script>
-import { getCountryListCache, setCountryListCache } from '@/api/cache'
-import { getCountrySelect } from '@/api/select'
+import { getCountryListCache } from '@/api/cache'
 
 export default {
   name: 'CountryIdSelect',
@@ -42,18 +41,7 @@ export default {
   },
   methods: {
     getCountrySelect() {
-      var list = getCountryListCache()
-      if (list === null || list === undefined) {
-        getCountrySelect().then(resp => {
-          var country = { disabled: true, pid: 0, code: '-', code2: '-', enName: 'Please select a country/region', cnName: '请选择国家/地区', cnLikeName: '请选择国家/地区', dhlRemote: 1, fedexRemote: 1, upsRemote: 1, tntRemote: 1, postlen: 1, spellCode: '1', id: 0 }
-          var countrys = []
-          countrys.push(country)
-          this.options = countrys.concat(resp.data)
-          setCountryListCache(this.options)
-        })
-      } else {
-        this.options = list
-      }
+      this.options = getCountryListCache()
     }
   }
 }

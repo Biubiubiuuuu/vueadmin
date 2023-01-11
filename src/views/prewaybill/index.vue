@@ -63,6 +63,7 @@
             >
               <CarrierRouteId
                 v-model="formQuery.carrierRouteId"
+                :get-extra-service-kinds-hanld="function(){}"
                 @setValue="(val) => (formQuery.carrierRouteId = val)"
               />
             </el-form-item>
@@ -327,14 +328,14 @@
             @click="removeOrder"
           >
             <i
-              class="icon iconfont el-icon-dy-776bianjiqi_congcaogaoxiangjiazai"
+              class="icon iconfont el-icon-dy-zuofei"
               style="vertical-align: -10%"
             />
             <span>作废订单</span>
           </button>
         </el-col>
         <el-col
-          v-if="status == 4"
+          v-if="status == 5"
           style="width: 67px;margin-top: 5px;"
         >
           <button
@@ -343,14 +344,14 @@
             @click="convertToPreOrder"
           >
             <i
-              class="icon iconfont el-icon-dy-776bianjiqi_congcaogaoxiangjiazai"
+              class="icon iconfont el-icon-dy-bianjiqi_congcaogaoxiangjiazai"
               style="vertical-align: -10%"
             />
             <span>转为已预录</span>
           </button>
         </el-col>
         <el-col
-          v-if="status == 4"
+          v-if="status == 5"
           style="width: 55px;margin-top: 5px;"
         >
           <button
@@ -422,12 +423,17 @@
                   <i id="copyBtn" ref="copyPreBillCode" class="el-icon-copy-document" style="cursor: pointer; margin-left: 10px;" :data-clipboard-text="props.row.preBillCode" data-clipboard-action="copy" @click="copyPreBillCode" />
                 </el-tooltip>
               </div>
-              <div style="width: 220px;" class="elcol">
-                运单号：{{ props.row.waybillCode }}
+              <div style="width: 265px;" class="elcol">
+                运单号：
+                <el-tooltip class="eltooltip" :content="props.row.waybillCode">
+                  <el-link type="primary" :underline="false">{{ props.row.waybillCode }}</el-link>
+                </el-tooltip>
               </div>
-              <div style="width: 222px;" class="elcol">
+              <div style="width: 265px;" class="elcol">
                 转单号：
-                {{ props.row.tranBillCode ? props.row.tranBillCode : '--' }}
+                <el-tooltip class="eltooltip" :content="props.row.tranBillCode">
+                  <el-link type="primary" :underline="false">{{ props.row.tranBillCode }}</el-link>
+                </el-tooltip>
               </div>
               <div style="width: 400px;" class="elcol">
                 最新轨迹：
@@ -1142,15 +1148,8 @@
           min-width="200px"
         />
         <el-table-column
-          label="hash"
-          prop="hash"
-          align="center"
-          show-overflow-tooltip
-          min-width="200px"
-        />
-        <el-table-column
           label="文件地址（点击下载）"
-          width="170"
+          width="320"
           align="center"
           show-overflow-tooltip
         >
@@ -1255,7 +1254,7 @@ import UnitType from '@/components/Select/UnitType'
 import CountryId from '@/components/Select/CountryId'
 import Client from '@/components/Select/Client'
 import Export from '@/components/Export'
-import { getRecStateSumAsync, getList, submitReturnAsync, submitSeizureAsync, cancelSeizureOrReturnAsync, exportExcelAsync, removesAsync, hardDeleteAsync, getDetail, convertToPreAsync, printLabelAsync, printInvoiceLabelAsync } from '@/api/prewaybill'
+import { getRecStateSumAsync, getList, submitReturnAsync, submitSeizureAsync, cancelSeizureOrReturnAsync, exportExcelAsync, removesAsync, hardDeleteAsync, getDetail, convertToPreAsync, printLabelAsync, printInvoiceLabelAsync, getPreWaybillLogListAsync } from '@/api/prewaybill'
 import { getCountryListCache, getPackTypeCache, getGoodsTypeCache, getClientCache } from '@/api/cache'
 let that
 
@@ -1314,8 +1313,10 @@ export default {
         case 2:
           return '已入仓'
         case 3:
-          return '已出仓'
+          return '已上网'
         case 4:
+          return '已签收'
+        case 5:
           return '已作废'
       }
     }
@@ -1323,7 +1324,7 @@ export default {
   data() {
     return {
       tableData: [], // 订单数据list,
-      countryList: [],
+      countryList: getCountryListCache(),
       packList: getPackTypeCache(),
       goodsList: getGoodsTypeCache(),
       clientList: getClientCache(),
@@ -1341,7 +1342,8 @@ export default {
         consignee: {
           countryId: 0
         },
-        sender: {}
+        sender: {},
+        logs: []
       },
       CS: {
         'min-width': '250px',
@@ -1414,7 +1416,6 @@ export default {
   created() {
     this.getRecStateSum()
     this.getList()
-    this.countryList = getCountryListCache()
     if (this.windowWidth < 400) {
       this.drawerSize = '100%'
     }
@@ -1612,7 +1613,7 @@ export default {
             type: 'success',
             duration: 1500
           })
-          this.status = 4
+          this.status = 5
           this.formQuery.preWayBillStateType = this.status
           this.getList()
           this.getRecStateSum()
@@ -1750,7 +1751,7 @@ export default {
     exportExcel() {
       var data = { 'ids': this.selectIds, 'columns': this.$refs.export.getColumns() }
       exportExcelAsync(data).then(resp => {
-        console.info(resp.data)
+        window.open(resp.data, '_blank')
       })
     },
     handleSelectionChange(val) {
@@ -1778,13 +1779,19 @@ export default {
       getDetail(id).then((resp) => {
         this.drawer = true
         this.drawerTitle = `${resp.data.preBillCode} 订单明细`
-        this.detailedData = resp.data
+        this.getPreWaybillLogList(resp.data, id)
+      })
+    },
+    getPreWaybillLogList(data, id) {
+      getPreWaybillLogListAsync(id).then(resp => {
+        var detail = data
+        detail.logs = resp.data
+        this.detailedData = detail
         this.$nextTick(() => {
           this.$refs.extraServices.setExtraServices(Array.isArray(this.detailedData.extraServices) ? this.detailedData.extraServices.map(x => (x.id)) : [])
         })
       })
     },
-
     handleDrawerClose() {
       this.drawer = false
     },
@@ -1853,55 +1860,40 @@ export default {
     },
     checkboxAll() {
       const list = []
-      const checkCount = this.tableData.filter(x => x.itemCheck).length
-      if (checkCount === this.tableData.length) {
-        this.isCheck = !this.isCheck
+      if (this.isCheck) {
+        for (const val of this.tableData) {
+          val['itemCheck'] = !this.isCheck
+          list.push(val)
+        }
         this.mycheckbox = 'el-checkbox__input'
-        for (const val of this.tableData) {
-          val['itemCheck'] = this.isCheck
-          list.push(val)
-        }
-      } else if (checkCount > 0) {
-        if (checkCount + 1 === this.tableData.length) {
-          this.mycheckbox = 'el-checkbox__input is-checked'
-        } else {
-          this.mycheckbox = 'el-checkbox__input is-indeterminate'
-        }
-        for (const val of this.tableData) {
-          val['itemCheck'] = this.isCheck
-          list.push(val)
-        }
       } else {
-        this.isCheck = !this.isCheck
-        this.mycheckbox = 'el-checkbox__input is-checked'
         for (const val of this.tableData) {
-          val['itemCheck'] = this.isCheck
+          val['itemCheck'] = !this.isCheck
           list.push(val)
         }
+        this.mycheckbox = 'el-checkbox__input is-checked'
       }
+      this.isCheck = !this.isCheck
       this.tableData = list
       this.selectIds = this.tableData.filter((item) => { return item.itemCheck }).map(item => { return item.id })
+      console.info('selectIds', this.selectIds)
       this.itemKey = Math.random()
     },
     childCheckbox(val, isItemCheck) {
-      const list = []
-      for (const item of this.tableData) {
-        if (val === item.id) {
-          item['itemCheck'] = isItemCheck
-        }
-        list.push(item)
-      }
-      this.tableData = list
-      this.itemKey = Math.random()
       const checkCount = this.tableData.filter(x => x.itemCheck).length
       if (checkCount === this.tableData.length) {
         this.mycheckbox = 'el-checkbox__input is-checked'
+        this.isCheck = true
       } else if (checkCount > 0) {
         this.mycheckbox = 'el-checkbox__input is-indeterminate'
+        this.isCheck = false
       } else {
         this.mycheckbox = 'el-checkbox__input'
+        this.isCheck = false
       }
       this.selectIds = this.tableData.filter((item) => { return item.itemCheck }).map(item => { return item.id })
+      console.info('selectIds', this.selectIds)
+      this.itemKey = Math.random()
     }
   }
 }
@@ -2050,5 +2042,9 @@ table .el-form-item--mini.el-form-item,
 
 ::v-deep .el-table td.el-table__cell, .el-table th.el-table__cell.is-leaf{
   border-bottom: none;
+}
+
+::v-deep .el-table__expanded-cell{
+  padding: 0;
 }
 </style>

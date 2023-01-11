@@ -11,8 +11,7 @@
 </template>
 
 <script>
-import { getCarrierRouteCache, setCarrierRouteCache } from '@/api/cache'
-import { getCarrierRouteSelect } from '@/api/select'
+import { getCarrierRouteCache } from '@/api/cache'
 
 export default {
   name: 'CarrierRouteIdSelect',
@@ -46,18 +45,7 @@ export default {
   },
   methods: {
     getCarrierRouteSelect() {
-      var list = getCarrierRouteCache()
-      if (list === null || list === undefined) {
-        getCarrierRouteSelect().then(resp => {
-          var data = { disabled: true, code: '-', carrierId: 1, id: 0, name: '请选择承运路线' }
-          var datas = []
-          datas.push(data)
-          this.options = datas.concat(resp.data)
-          setCarrierRouteCache(this.options)
-        })
-      } else {
-        this.options = list
-      }
+      this.options = getCarrierRouteCache()
     },
     dataChange(v) {
       this.getExtraServiceKindsHanld(v)

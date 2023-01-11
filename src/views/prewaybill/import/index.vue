@@ -12,7 +12,7 @@
               label-width="100px"
             >
               <el-row type="flex" class="row-bg" justify="center">
-                <el-col :sm="12" :md="10" :lg="8" :xl="5" :xs="24">
+                <el-col :sm="13" :md="11" :lg="9" :xl="6" :xs="24">
                   <el-form-item label="默认运输方式" prop="carrierRouteId">
                     <CarrierRouteId
                       v-model="ruleForm.carrierRouteId"

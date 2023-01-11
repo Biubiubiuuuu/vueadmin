@@ -1,13 +1,13 @@
 import request from '@/utils/request'
 
-export function getCountrySelect() {
+export async function getCountrySelect() {
   return request({
     url: '/Country/GetSelectAsync',
     method: 'post'
   })
 }
 
-export function getClientSelect(data) {
+export async function getClientSelect(data) {
   return request({
     url: '/Client/GetSelectAsync',
     method: 'post',
@@ -18,42 +18,42 @@ export function getClientSelect(data) {
   })
 }
 
-export function getCarrierRouteSelect() {
+export async function getCarrierRouteSelect() {
   return request({
     url: '/CarrierRoute/GetCurrentSelectAsync',
     method: 'post'
   })
 }
 
-export function getCurrencySelect() {
+export async function getCurrencySelect() {
   return request({
     url: '/Server/GetCurrencyType',
     method: 'post'
   })
 }
 
-export function getExtraServiceSelect() {
+export async function getExtraServiceSelect() {
   return request({
     url: '/',
     method: 'post'
   })
 }
 
-export function getGoodsTypeSelect() {
+export async function getGoodsTypeSelect() {
   return request({
     url: '/Server/GetGoodsType',
     method: 'post'
   })
 }
 
-export function getPackTypeSelect() {
+export async function getPackTypeSelect() {
   return request({
     url: '/Server/GetPackType',
     method: 'post'
   })
 }
 
-export function getUnitTypeSelect() {
+export async function getUnitTypeSelect() {
   return request({
     url: '/Server/GetUnitCodeType',
     method: 'post'
